@@ -1,0 +1,152 @@
+creating a group:-
+
+groupadd [options] groupname
+ex:-
+   groupadd sapadmns
+   or
+   groupadd -g 1009 sapadmns
+   where -g : group id
+
+
+removing a group:-
+
+groupadel groupname
+ex:-
+groupdel sapadmns
+
+Group details are kept in /etc/group
+The format of /etc/group entries:
+groupname:PswdField:gid:user1,user2, ....
+ex:-
+joshna:x:20077:
+
+Lab Activities:
+Create a group:
+groupadd sapadmns
+Verify if group is created by lookiing into /etc/group file
+# tail /etc/group
+Observe that the group id is taken automatically which is next increemental number from the last entry in /etc/group
+Delete the group:
+# groupdel sapadmns
+Observer the group definitions entry is removed from /etc/group
+# tail /etc/group
+Create a group with given group id. Make sure the given group id is not used by any group. Otherwise the command will fail.
+# groupadd -g 300033 sapadmns
+# tail /etc/group
+Observe that the group is created (you can find entry at the last line of the file /etc/group) with given gid
+Delete the group and observer the group is removed.
+# groupdel sapadmns
+# tail /etc/group.
+Note:- You can not remove a primary group of a user. Primary groups are automatically deleted when the user is deleted.
+Example:
+[root@trainer-blr01 ~]# id joshna
+uid=20071(joshna) gid=20077(joshna) groups=20077(joshna)
+[root@trainer-blr01 ~]# groupdel joshna
+groupdel: cannot remove the primary group of user 'joshna'
+
+/etc/login.defs file is userd to set the default password aging policies. It also contain UID and GID min and max values.
+
+
+Creating encrypted Password(SHA512):
+python3 -c "import crypt;print(crypt.crypt('test123','\$6\$jkdfsdfajsdzfszfjksafjklsdajifho'))"
+Create a user along with Encrypted Password:
+[root@trainer-blr01 ~]# useradd -p '$6$jkdfsdfajsdzfszf$F845CPG0O.oUpcuiXHWrWlDVPkKBuAI1d5Em4TP.oMOz/rPOCm/alXwTo/UV3uJhh4YnOyecdbcqLs2Oe.vuQ/' myu02
+
+/etc/skell directory:
+all the files that exists in /etc/skell are copied to users's home directory upon user creation using useradd command.
+By default below exists in /etc/skel directory
+.bash_history
+.bash_logout
+.bash_profile
+.bashrc
+Activity: create a file under /etc/skell and create a user and observe that the newly created file is also exists in new user's home directory.
+
+Change user's home directory to new directory and move all the user's files from old home directory to new directory.
+tail -1 /etc/passwd
+ruser01:x:1004:1004:Research user fro chemical lab:/home/chem01:/bin/bash
+
+[root@arif ~]# usermod -m -d /home/ruser01 ruser01
+[root@arif ~]# tail -1 /etc/passwd
+ruser01:x:1004:1004:Research user fro chemical lab:/home/ruser01:/bin/bash
+[root@arif ~]# cd /home/ruser01
+[root@arif ruser01]# ls -l
+total 8
+-rw-r--r-- 1 ruser01 ruser01 162 Jun 11 12:04 admin.file
+-rw-r--r-- 1 ruser01 ruser01  34 Jun 11 12:09 login.txt
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__10.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__1.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__2.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__3.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__4.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__5.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__6.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__7.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__8.odd
+-rw-rw-r-- 1 ruser01 ruser01   0 Jun 11 12:15 myresearch__9.odd
+[root@arif ruser01]# ls -ld /home/chem01
+ls: cannot access '/home/chem01': No such file or directory
+
+Lock and unlock the user:
+ usermod -L ruser01
+ where -L : Lock
+       -U : Unlock
+ exit and try to login as ruser01, the system will not allow you to login. You will get access denied
+ Now login as root and try to unlock the user and again try to loin as ruser01 and that succeeds
+ usermod -U ruser01
+ echo $?
+Setting password from standard input:-
+[root@arif ~]# echo test123 | passwd --stdin ruser01
+Changing password for user ruser01.
+passwd: all authentication tokens updated successfully.
+
+Checking the status of user passwod (locked or unlocked)
+syntax:- passwd -S username
+          where -S : Status
+[root@arif ~]# usermod -L ruser01
+[root@arif ~]# passwd -S ruser01
+ruser01 LK 2022-06-11 0 99999 7 -1 (Password locked.)
+[root@arif ~]# usermod -U ruser01
+[root@arif ~]# passwd -S ruser01
+ruser01 PS 2022-06-11 0 99999 7 -1 (Password set, SHA512 crypt.)
+Create a new user and do not set password and check the status. It shows as password locked.
+[root@arif ~]# useradd ruser02
+[root@arif ~]# passwd -S ruser02
+ruser02 LK 2022-06-11 0 99999 7 -1 (Password locked.)
+[root@arif ~]#
+
+locking and unlocking users using passwd command. Below are the examples:
+[root@arif ~]# passwd -l  ruser01
+Locking password for user ruser01.
+passwd: Success
+[root@arif ~]# passwd -S ruser01
+ruser01 LK 2022-06-11 0 99999 7 -1 (Password locked.)
+[root@arif ~]# passwd -u ruser01
+Unlocking password for user ruser01.
+passwd: Success
+[root@arif ~]# passwd -S ruser01
+
+ruser01 PS 2022-06-11 0 99999 7 -1 (Password set, SHA512 crypt.)
+[root@arif ~]#
+Switch user using su command:-
+used to swith to different user 
+syntax: su username
+       or
+        su - username
+    When username is ignored, it is assumed as 'root' user
+when - is used, the respective user environment is applied. Else the environment before user switch still exists.
+/sbin/nologin:
+when used /sbin/nologin as a shell, the user can not log into the shell. The nologin shell prevents interactive use of the system, but does not prevent
+all access. Users might be able to authenticate and upload or retrieve files through applications such as web applications, file transfer programs, or mail readers if they
+use the user's password for authentication.
+[root@arif ~]# usermod -s /sbin/nologin ruser01
+[root@arif ~]# grep ruser01 /etc/passwd
+ruser01:x:1004:1004:Research user fro chemical lab:/home/ruser01:/sbin/nologin
+[root@arif ~]# exit
+logout
+Connection to 192.168.4.11 closed.
+[root@trainer-blr01 ~]# ssh ruser01@192.168.4.11
+ruser01@192.168.4.11's password:
+Last login: Sat Jun 11 12:44:32 2022
+This account is currently not available.
+Connection to 192.168.4.11 closed.
+[root@trainer-blr01 ~]#

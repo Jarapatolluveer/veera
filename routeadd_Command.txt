@@ -1,0 +1,57 @@
+How to configure static routing in Linux:-
+-----------------------------------------
+Static routes will be added usually through "route add" command or "ip route" command> Howevever ip "route add" command configures routing on the run time and doesnt persistent the configuration after reboot. To make it persistent across reboots, you have to add  the reoute using nmcli command.
+Add Static route for a subnet:-
+To add static route using route add command for a subnet:
+# route add -net 192.168.1.0/24 netmask 255.255.255.0 gw 192.168.1.1 dev eth0
+
+To add static route using "ip route" command for a subnet:
+# ip route add 192168.1.0/24 via 192.168.1.1 dev eth0
+
+Adding static route for a single IP:-
+To add static route using "route add" fora  single IP address target:
+# route add -host 192.168.1.25 gw 192.168.1.0
+Add a route via gateway 192.168.4.1 to 192.168.3.0/24 network for the interface ens224
+ route add -net 192.168.3.0/24 gw 192.168.4.1 dev ens224
+Print the added route using route command
+route
+Remove the above added route
+route del -net 192.168.3.0/24 gw 192.168.4.1 dev ens224
+Verify if the route is removed
+route
+Add the above route using route add command
+route add -net 192.168.3.0/24 gw 192.168.4.1 dev ens224
+Verify if route is added. Below are three different ways to see routing table
+ip r s
+netstat -nr
+route
+Above changes are not persistent. Reboot the system and verify if changes are persistent
+reboot
+Issue below commands if routes are still available after reboot
+netstat -nr
+ip r s
+Above commands confirms that added are not visible ie they are not persistent
+Below command adds the rotue to host (above example is to add the route to network)
+route add -host 192.168.3.15 gw 192.168.4.1 dev ens224
+Now verify and see if host route is visible(the above is also not persistent)
+There are various ways to verify the routing table in Linux. Few command are listed below:
+# route -n
+# netstat -nr
+# ip route show
+How to add persistent static route using nmcli command:-
+Use the below command to add static route using nmcli command:
+nmcli con mod conName ipv4.routes "NetworkAddress/Prefix Gateway" 
+nmcli con mod ens224 ipv4.routes "192.168.3.0/24 192.168.4.1"
+If you wnat add routes without replacing previous ones:
+nmcli con mod conName +ipv4.routes "NetworkAddress/Prefix Gateway"
+nmcli con mod ens224 +ipv4.routes "192.168.5.0/24 192.168.5.1"
+You may need to restart NetorkManager or use nmcli con reload ConName or nmcli dis Infname; nmcli con Ifname
+or
+ifdown Ifname and ifup Ifname.
+Verify route using below command. Changes are persistent and the same can be verified by reboot.
+ip r s
+netstat -nr
+route
+ 
+
+

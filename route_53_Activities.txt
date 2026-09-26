@@ -1,0 +1,61 @@
+Activity - 1
+Intro to Cloud Shell
+1.create domain
+2.create zone
+3.add A records
+4.Open Cloud Shell and Install bind-utils for nslookup and dig commands
+  Verify the resolutions.
+Activity -2
+1.Create Instances 
+ a) mumbai
+ b) frankfurt
+ c) virgina
+enable sec group for each (http, https, ssh)
+2.Create a Load Balancer for Frankfurt with for the single instance
+Activity -3 
+Take Public IPs
+xxxxx eu-central-1
+xxxxx us-east-1
+xxxxx ap-south-1
+uril of alb (dns name)
+Activity -4
+Discuss demo on TTL on A record. Demonstrate TTL by changing A record
+Activity -4
+CNAME Vs Alias
+CNAME only for non root domain 
+where as alias works for both non root domain and root domain
+alias are free of charge.
+Create url CNAME app.msanjeevi.com to ALB URL and test the same.
+Create an alias for ALB URL
+alc.msanjeevi.com  ARecord (Routes to an IPv4 traffic) Alias to Application/Classic Load Balancer
+Choose Region
+Choose LoadBalancer
+Evaluate Target Health Path: Yes
+Do the above for msanjeevi.com (this will work as alias works for root domain. Try doing this with CNAME, it fails)
+
+Ativity -5
+Route53  Routing policies define how Route53 responds to DNS queries
+Simple Routing Policy:-
+Route traffic to single resource
+can specify multiple values (picks randomly)
+simple.msanjeevi.com A Routes to IPV4   Value (provide IP) [Enter multiple values and check]
+
+Activity -6
+Weighted policy
+
+Activity -7
+Latency Policy
+
+Activty -8
+Configure heath checks
+configure calculated health check
+try above with previous activities
+
+Activity-9
+Configure Failover Rounting Policy
+
+Activity-10
+Configure Geolocation routing policy
+Discuss on ip based routing policy
+Configure Multi-Value Routing Policy and show along with health checks. Explain diff between simple multivalue and Multivalue routing
+**Packup**

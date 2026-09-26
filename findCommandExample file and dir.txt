@@ -1,0 +1,70 @@
+find - search for files in a directory hierarchy
+Syntax:-
+find [options] [starting-point...] [expression]
+
+1. To find a file with name 'passwd'
+     find / -name passwd -print
+2. To find a file prg1.sh in /root 
+     find /root -name prg1.sh -print
+3. To print all files in the system
+     find / -print
+4. Print all files under /home/student
+    find /home/student  -print
+5. You can use Shell Metacharacter in the find command. For example, below command shows how to print all partitions in a device /dev/sda
+   find /dev -name sda? -print
+6. Print all scsi devices in the system
+     find /dev -name sd* -print
+  or
+     find /dev -name sd? -print
+7. Find files with by ingnoring case sensitivity.
+    # find /home/student -iname PRG1.sh -print
+   The above will find prg1.sh and PRG1.sh 
+8. Print all the files based on the ownshipt criteria. Example, find all the files that are owned by student user in the entire system
+   find / -user student -print
+9. Print all the files that are owned by group call 'web'
+   find / -group web -print
+10.Find all the files/directories in the system based on user id (uid) (example uid : 910)
+  find / -uid 910 -print
+11.Find all the files that are owned by naagesh and fin group.
+  find / -user naagesh -group fin -print 2>/dev/null
+12.Print all the file under /home/student that having permission as 655
+     find /home/student -perm 655 -print
+13.Find all the files that are owned by student with minimum rw permission enabled.
+    find / -user student -perm -600 -print
+    in the above - (hyphen) symbol for permission represents atleast permissions. Instead of hyphen symbol, you can specify forward slash (/) sysmbol to refer the same.
+14. Search a file based on its size.
+    find / -size 10M -print
+15. print all the files that are greater than 10 MB
+    find / -size +10M -print
+16. Seach files based on modification time
+      Search files that are modified 120 mins ago
+     find / -mmin 120 -print
+     find /root -mtime -1 -print : files or dirs modified since last 24 hours. ( -1 means since last one day ie 1*24 hours)
+17.You can perform the search based on type of file: For example, if you want to print all directories in /home/student directory, 
+     find /home/student -type d -print
+18. To print all regular files
+     find /home/student -type f -print
+19. To print all link file
+     find /home/student -type l -print
+20. To search all block special files
+     find /dev -type b -print
+21. To print all files that have more than one link
+     find / -type f -links +1  -print
+22. Search all files that have one link
+    find / -type f -links 0 -print
+23.To seach in a particular device only
+    find /sap -xdev -name name.txt  -print
+   the search takesplace in the device (lv or partition) where /sap directory exists
+   Find *.yml files in /home/ansible and copy those in /log directory.
+24.find /home/ansible -name *.yml -exec cp {} /log \;
+   Long list file xyz.txt under /sap directory.
+25.find /sap -name xyz.txt -print -exec ls -l {} \;
+   Delete a file based on given inode number
+26.find /sap -inum 132 -exec rm -f {} \;
+
+
+
+
+
+
+

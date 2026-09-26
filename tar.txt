@@ -1,0 +1,53 @@
+Create a tar :
+	tar -cvf filename.tar FileOrDirTotar
+	ex:- tar -cvf etc.tar /etc
+                         tar -cvf mypackage.tar pkgname
+                      or 
+                         tar cvf etc.tar /etc
+	        where c: create
+	                   v: verbose
+		 f : Filename
+
+To see contents of tar file
+	tar -tvf Filename.tar
+To extract tar file contents (in your pwd)
+	tar -xvf Filename.tar
+	 where x: extract
+Note:- tar command will not compress any files by default.
+-------------------------------------------------------------------------
+Compressing a file using gzip command:-
+gzip filenametoCompress
+Note:- you will get .gz extension after file compression. The original file willbe compressed and the same will be named with .gz extension.,
+gzip myfile1.mp3
+or
+gzip mybackup.tar
+
+To uncompress:-
+----------------------
+gunzip Filname.gz
+The given file will be uncompressed
+--------------------------------------------------------------------------------------
+To tar and compress a given directory:
+Two ways:
+   Option1: 
+                 1. create tar 
+                      tar -cvf etc.tar /etc
+                 2. zip using gzip
+                      gzip /etc.tar
+  Option2:
+	tar and gzip in one command
+                  tar -zcvf etc.tar.gz /etc
+
+
+
+
+
+
+
+
+
+
+
+
+
+

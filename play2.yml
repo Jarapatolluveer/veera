@@ -1,0 +1,16 @@
+---
+- name: play book to create a directory and copy play2.yml into remote servers
+  hosts: [192.168.16.200]
+  become: true
+  remote_user: ansible
+  tasks:
+  - name: create a directory /home/ansible/Myremote
+    file:
+     path: /home/ansible/Myremote
+     state: 
+     mode: 0755
+  - name: copy play2.yml to remote server
+    copy:
+     src: /home/ansible/play2.yml
+     dest: /home/ansible/Myremote/play2.yml
+...

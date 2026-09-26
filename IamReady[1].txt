@@ -1,0 +1,733 @@
+ ------------------------------------------------------------
+I am Ready and  I am the Spartan, Hu, Hu, Hu....
+-------------------------------------------------------------
+
+1.What is a runlevel? Type of Runlevels? What is runlevel 5 and what is default runlevel and where it is defined?
+Ans:- Runlevels are operational levels that describe the state of the system  with respect to what services are available. There are 0-6,s or S  runlvels available. Runlevel 5 refers to multiuser with GUI. Default runlevel is defined in /etc/inittab, which tells to init to what runlevel the system to be brough upon the boot/reboot.
+2.df hung? What might be the issue? How do you know which server is causing the issue(incase of nfs mount issue)
+Ans:- Due to NFS mounts, where the nfs server is not responding. Check mount command to know all the existing mounts, seach for NFS mounted filesystems to check the problem.
+3.You come to know that the disk is currpted after issuing multipath -ll command. What will you do?
+This is not obvious, however, it might coincidence that the disk might have been disconnected from storage due to connectivity issues, zone issues or some other technical glitch at storage end. Work with storage team to fix the issue. Once the storage team fix the issue and if you observer the data is corrupted, you need to restore from backup(liaise with backup team for the same) or you might have had rsync configured based on you environment.
+4. Tool to install Package? How will you install the same?
+I use rpm or yum command to install the package. When using rpm command, I use rpm –ivh /path/to/package, in case of yum, I use yum install packagename –y command.
+5. How do you scan a lun?
+Echo “ - - -“ > /sys/class/fc_host/hostX/scan
+6.Request from application team to build /app filesystem 20GB. Provide the complete procedure.
+I assume that I have enough free space in appvg(used by application team), if no, I will request disk from storage team(via service request), and scan the pv(tell the command). Create the pv add the same to vg(tell the command), and create lv, then create file system. Below are steps to create 20GB filesystem with /app mount point
+lsblk
+Echo “ - - -“ > /sys/class/fc_host/hostX/scan
+Lsblk, observer you got the disk(compare with old output), else inform to storage team.
+Pvcreate /dev/sdg
+Vgextend appvg /dev/sdg
+Lvcreate –L 20G –n applv01 appvg /dev/sdg
+Mkfs.ext /dev/appvg/applv01
+Mkdir /app
+Introduce the line in /etc/fstab : /dev/mapper/appvg-applv01   /app  ext4  defaults 0 0
+Finally mount the fs using mount /app command and verify with df –h command. Close SR/Change and informed to application team.
+7.NTP configuration file?
+ans:- /etc/ntp.conf
+8.How will you list files that are modified 7 days ago?
+find /path -mtime +7 -print
+9.kdump configuration file?
+ans:-kdump is a feature of the Linux kernel that creates crash dumps in the event of a kernel crash. When triggered, kdump exports a memory image (also known as vmcore) that can be analyzed for the purposes of debugging and determining the cause of a crash. To configure the amount of memory to be reserved for the kdump kernel, edit the /boot/grub/grub.conf file and add crashkernel=<size>M
+10.What are the servers you are supporting? Have you worked on cisco servers?
+Ans:- I am supporting prod, pre-prod(uat) and dev servers
+11.Procedure to patch the system?
+Ans:- check my material
+12.What is sticky bit? How to enable?
+check my material
+13.How will you see WWWN and what are the different ways?
+check my material
+14.How wto configure bonding? how to know the status of bond interface?
+15.yum configuration files and usage?
+16.How do you now the latency time of a disk?
+ans:- You can use iostat -x and check for the await column. the await column shows avg request latency.
+17.How do you the particular process running at what port ?
+ans:- use -p flag along with nestat commnd. example: netstat -ntulp
+18.NFS Portnumber ? Configuration file? Usage?
+19.Configuration file for interfaces?
+20.Crontab file format, how to edit crontab and crontab file location?
+21.What is the difference between zombie and defunct process? Can you kill a zombie process? What will happen?
+Ans:-In linux, defunt or zombie - both are same. Processes marked <defunct> are dead processes (so-called "zombies") that remain because their parent has not destroyed them properly. These processes will be destroyed by init if the parent process exits. killing defunt or zombie will not have any effect.
+22.Application team got some issue with filesystem? What do you do?
+23.Filesystem unmount is not happenning? Reason? How to achieve this? How to list process and how to kill ?
+24.What are different type singals available for kill command in linux?
+25.Different process states?
+26.Command to restart network in RHEL6 and RHEL7
+27.filesytem went to readonly mode? What will you do?
+Ans:- This issue araises if disks got disconnect from the srver (might be you are using storage disks, and due to some technical reasons in the storage, disk got disconnected). You need to reboot the server if those filesystems are from root disk(OS filesytems). If those are userdefined Volume groups, you need umount, deactivate and actiate vgs and lv and then mount.
+28.booting procedure?
+Ans:- Poweron-->Post->BIOS->MBR->Grub->Kernel->Init->Runlevels
+29Server installation from scrach?
+30.Patching procedure from scratch?
+31.Increase and descrese filesytem?
+32.Recently faced issues?
+33.how will reduce the root filesystem?
+Ans:-
+34.Samba configuration?
+Ans:- /etc/samba/smb.conf
+35.Tell me the process to create a server?
+36.Have done migration?
+-------------------------------------
+What  You Do:
+-------------------------------------
+Tell Me about yourself?
+----------------------
+My Name is alc, complete B.Tech in the year 2015 from bangalore university. I am having 4 years of experience in Administering Linux servers. Currently working for alc company, bangalore, repsponsible for L2 Linux system admnistration.
+
+What are your daility Activites:-
+--------------------------------
+Administering day to day tasks such as:
+
+* handling daily tickets, service requests
+* work on assigned changes
+* participate in bridge calls for severity tickets
+* providing root cause analysis for severity issues
+* automating any repeated tasks
+* reply for emails pertaining to my works (to clients/customers or other teams)
+* work on any server builds
+* work on any project works etc.,
+
+what do you mean by daily alearts or incidents or what kind of incidents you get:
+--------------------------------------------------------------------------------
+I usually get incidents(alerts) to my ticketing tool(remedy), many of them are created by monitoring tools installed in the server such as
+*)cpu usage (more cpu is being used by the server)
+*)memory usage (more memory ie > 80% is being used by the server)
+*)network or disk i/o usage is more
+*)any daemon or service is not working for some reason
+*)filesystem issues such as filesystem space usage issue
+*)time sync issue because of ntp is not working for some reason
+*)application/db team/some user unable to login
+*)user creation, password issues, login issues
+*)directory or file permission issues
+*)scp or ftp where application or db team not able to do scp or ftp for some reason.
+*)user limits reached max resource utilization
+*)swap space usage is more
+*)disk failure or system planar(mother board) or network interface card failure detected
+*)system is slow
+*)disk paths been failed
+*)HBA card ports found faulty 
+*)unable to mount the filesystem or NFS mount is not mouting
+*)server is not coming up after issuing the reboot command
+*)unable to login to physical system console
+*)application is complaining that their password less authentication is not wroking
+*)server is not reachable 
+*)Filesystem usage is > 80%
+*)
+Service Requests:-
+-----------------
+*)create/delete users requested by app/db or by customer
+*)filesystem creation/deletion/changes(increase or decrease)
+*)swap space creation/deletion or add/remove additonal disks to or from the system from SAN team
+*)Install requested rpms (request might come from applicaton or db or customer)
+*)Request to patch the system
+*)Request add any hardware component such as FC card or NIC (if it is physical server)
+*)Add/remove or change IP or netmask or route ro bonding(add/remove/modify)
+*)Configure any NFS or SAMBA shares
+*)Configure/change NTP servers
+*)change default gateway or server name any tunable parameter from sysctl file
+*)generate kernel dump or generate sos report to trubleshoot any memory leakage issues
+*)Request to tar/rsync/ or restore the data
+*)request to reboot the server
+*)configure cron jobs
+*)Run security audit scripts to generate security issues if any found the system?
+*)configure ssh passwordless authentication
+*)perform sanity checks/or health checks on the server?
+*)download or upload files from server to another
+*)Create a case with redhat
+*)create a service request for HW engineer to enter into the data center
+*)server decommissioning
+*)configure new ip addresses (aliases or replace existing ips)
+
+
+Below are the physical server models which I handled:
+-----------------------------------------------------
+Dell PowerEdge 13G R730 
+   Intel® Xeon® processor E5-2600 v4 product family
+   Intel® Xeon® Processor E7-8800 Product Family 
+   Intel® Xeon® Processor E7-4800 Product Family
+   Intel C610 series chipset
+   Intel® C602J
+PowerEdge R730 Rack Server
+PowerEdge R630 Rack Server
+PowerEdge R730xd Rack Server
+PowerEdge R930 Rack Server
+PowerEdge R830 Rack Server
+PowerEdge R230 rack server
+PowerEdge C4130 Rack Server
+PowerEdge R330 rack server
+PowerEdge M630 Blade Server
+Dell PowerEdge M1000e Blade Enclosure
+PowerEdge M830 Blade Server
+
+---------------------
+And I need more Sir:
+---------------------
+
+1 Why LVM is required ?
+
+Ans: LVM stands for Logical Volume Manager , to resize filesystem’s size online we required LVM partition in Linux. Size of LVM partition can be extended and reduced using the lvextend & lvreduce commands respectively.
+
+2 How To check Memory stats and CPU stats ?
+
+Ans:  Using ‘free’ & ‘vmstat’ command we can display the physical and virtual memory statistics respectively.With the help of ‘sar’ command we see the CPU utilization & other stats.
+
+3 What does Sar provides and at which location Sar logs are stored ?
+
+Ans: Sar Collect, report, or save system activity information. The default version of the sar command (CPU utilization report) might be one of the first facilities the  user  runs  to  begin system  activity investigation, because it monitors major system resources. If CPU utilization is near 100 percent (user + nice + system), the workload sampled is CPU-bound.
+
+By  default log files of Sar command  is located at  /var/log/sa/sadd file, where the dd parameter indicates the current day.
+
+4 How to increase the size of LVM partition ?
+
+Ans: Below are the Logical Steps :
+– Use the lvextend command (lvextend -L +100M /dev/<Name of the LVM Partition> , in this example we are extending the size by 100MB.
+– resize2fs /dev/<Name of the LVM Partition>
+– check the size of partition using ‘df -h’ command
+
+5 How to reduce or shrink the size of LVM partition ?
+
+Ans: Below are the logical Steps to reduce size of LVM partition :
+ -Umount the filesystem using umount command,
+ -use resize2fs command , e.g resiz2fs /dev/mapper/myvg-mylv 10G
+ -Now use the lvreduce command , e.g lvreduce -L 10G /dev/mapper/myvg-mylv
+
+Above Command will shrink the size & will make the filesystem size 10GB.
+
+6 How to create partition from the raw disk ?
+
+Ans: Using fdisk utility we can create partitions from the raw disk.Below are the steps to create partition from the raw dsik :
+– fdisk  /dev/hd* (IDE) or /dev/sd* (SCSI)
+– Type n to create a new partition
+–  After creating partition , type w command to write the changes to the partition table.
+
+7 Where the kernel modules are located ?
+
+Ans: The ‘/lib/modules/kernel-version/’ directory stores all kernel modules or compiled drivers in Linux operating system. Also with ‘lsmod’ command we can see all the installed kernel modules.
+
+8 What is umask ?
+
+Ans: umask stands for ‘User file creation mask’, which determines the settings of a mask that controls which file permissions are set for files and directories when they are created.
+
+9 How to set the umask permanently for a user?
+
+Ans: To set this value permanently for a user, it has to be put in the appropriate profile file which depends on the default shell of the user.
+
+10 How to change the default run level in linux ?
+
+Ans: To change the run level we have to edit the file “/etc/inittab” and change initdefault entry ( id:5:initdefault:). Using ‘init’ command we change the run level temporary like ‘init 3’ , this command will move the system in runlevl 3.
+
+11 How to share a directory using nfs ?
+
+Ans: To share a directory using nfs , first edit the configuration file ‘/etc/exportfs’ , add a entry like
+‘/<directory-name>  <ip or Network>(Options)’ and then restart the nfs service.
+
+12 How to check and mount nfs share ?
+
+Ans: Using ‘showmount’ command we can see what directories are shared via nfs e.g ‘showmount -e <ip address of nfs server>’.Using mount command we can mount the nfs share on linux machine.
+
+13 What are the default ports used for telnet,rpcbind,mountd, nfs, http, httpd, tftp, vnc, iscsi, smb,nmb, SMTP,DNS,FTP,DHCP,SSH and squid ?
+ Ans: Service      Port
+ SMTP          25
+ DNS            53
+ FTP             20 (data transfer) , 21 ( Connection established)
+ DHCP         67/UDP(dhcp server) , 68/UDP(dhcp client)
+ SSH            22
+ Squid         3128
+
+14 What is Network Bonding ?
+
+Ans: Network bonding is the aggregation of multiple Lan cards into a single bonded interface to provide fault tolerance and high performance. Network bonding is also known as NIC Teaming.
+
+15 What are the different modes of Network bonding in Linux ?
+
+Ans: Below are list of modes used in Network Bonding :
+
+balance-rr or 0 – round-robin mode for fault tolerance and load balancing.
+active-backup or 1 – Sets active-backup mode for fault tolerance.
+balance-xor or 2 – Sets an XOR (exclusive-or) mode for fault tolerance and load balancing.
+broadcast or 3 – Sets a broadcast mode for fault tolerance. All transmissions are sent on all slave interfaces.
+802.3ad or 4  – Sets an IEEE 802.3ad dynamic link aggregation mode. Creates aggregation groups that share the same speed & duplex settings.
+balance-tlb or 5 –  Sets a Transmit Load Balancing (TLB) mode for fault tolerance & load balancing.
+balance-alb or 6 –  Sets an Active Load Balancing (ALB) mode for fault tolerance & load balancing.
+
+16 How to check and verify the status the bond interface.
+
+Ans: Using the command ‘cat /proc/net/bonding/bond0’ , we can check which mode is enabled and what lan cards are used in this bond. In this example we have one only one bond interface but we can have multiple bond interface like bond1,bond2 and so on.
+
+17 How to check default route and routing table ?
+
+Ans: Using the Commands ‘netstat -nr’ and ‘route -n’ we can see the default route and routing tables.
+
+18 How to check which ports are listening in my Linux Server ?
+
+Ans:  Use the Command ‘netstat –listen’ and ‘lsof -i’
+
+19 List the services that are enabled at a particular run level in linux server ?
+
+Ans: With the help of command ‘chkconfig –list | grep 5:on’ we can list all the service that are enabled in run level5. For other run levels just replace 5 with the respective run level.
+
+20 How to enable a service at a particular run level ?
+
+Ans: We can enable a service using the Command ‘chkconfig <Service-Name> on –level 3’
+
+21 How to upgrade Kernel in Linux ?
+
+Ans: We should never upgrade Linux Kernel , always install the new New kernel using rpm command because upgrading a kenel can make your linux box in a unbootable state.
+
+22 How To scan newly asssigned luns on linux box without rebooting ?
+
+Ans: There are two ways to scan newly assigned luns :
+Method:1 if sg3 rpm is installed , then run the command ‘rescan-scsi-bus.sh’(rpm is : sg3_utils)
+Method:2 Run the Command ,  echo ” – – – ” > /sys/class/scsi_host/hostX/scan
+23 How  to find WWN numbers of HBA cards in Linux Server ?
+
+Ans: We can find the WWN numbers of HBA cards using the command ‘systool -c fc_host -v | grep port_name’
+
+24 How to add & change the Kernel parameters ?
+
+Ans: To Set the kernel parameters in linux , first edit the file ‘/etc/sysctl.conf’ after making the changes save the file and run the command ‘sysctl -p’ , this command will make the changes permanently without rebooting the machine.
+
+25. How to find all the regular files in a directory  ?
+
+Ans: using the command ‘find /<directory -type f’.
+
+26 What is load average in a linux ?
+
+Ans: Load  Average is defined as the average sum of the number of process waiting in the run queue and number of process currently executing over the period of 1,5 and 15  minutes. Using the ‘top’ and ‘uptime’ command we find the load average of a linux sever.
+
+27.What is the proper method to remove old kernels from a Red Hat Enterprise Linux system?
+
+Ans:-# 
+Kernels, like all other files on Red Hat Enterprise Linux, if installed via a supported method, are part of an RPM package. To show your currently installed kernels issue the following command:
+rpm -q kernel
+kernel-2.4.21-4.EL
+kernel-2.4.21-15.0.3.EL
+kernel-2.4.21-15.0.4.EL
+kernel-2.4.21-27.0.2.EL
+Choose which kernel you want to uninstall from the list of those installed. Then use one of the following commands to remove the kernel package:
+yum remove <package_name>
+Or	
+# rpm -e kernel-2.4.21-4.EL
+Do not remove the kernel the system is currently running. To verify which kernel the system currently has loaded, use the following command:
+uname -a
+
+28 How to  Add a Module (driver)
+Ans:- insmod; example: insmod /path/to/snd-usb-audio.ko
+
+29. How to List All Loaded Modules
+Ans:-/proc/modules (also accessed via command lsmod).
+
+30. How to Remove a module
+Ans:-modprobe -r ModuLeName
+
+31.What is the command to see number of modules installed on server
+Ans:- modprobe -l
+
+32.How to blacklist kernel modules?
+Ans:-Open your /etc/modprobe.d/blacklist file and add drivername using following syntax:
+blacklist driver-name
+Reboot your box and use lsmod command to show the status of modules in the Linux Kernel
+
+33.How to  prevent a Linux kernel module from auto loading
+Ans:-Open your /etc/modprobe.conf file and turn of auto loading using following syntax:
+alias driver-name off
+
+34.How do I set sysctl variables under  Linux?
+Ans:-To set sysctl variables (kernel parameters), you need to use the sysctl command which is used to modify kernel parameters at runtime. The parameters available are those listed under /proc/sys/. Procfs is required for sysctl support in Linux. You can use sysctl command to both read and write sysctl variables.
+You must login as the root user to use any one of the following command on a Linux operating systems.
+Display Linux kernel parameters, the syntax is:
+# sysctl variable
+Display all sysctl variables 
+ # sysctl -a
+ # sysctl -a | more
+ # sysctl -a | grep 'something'
+ # sysctl -a | grep memory
+
+Sample outputs:
+vm.memory_failure_early_kill = 0
+vm.memory_failure_recovery = 1
+vm.overcommit_memory = 0
+To see value for kernel variable called kernel.hostname, enter:
+# sysctl -n kernel.hostname
+How do I set new values?
+There are three methods to set new values for given kernel parameters as follows:
+Method # 1: Setting value via procfs
+You can use standard echo command to write data to variables (this temporary change):
+# echo "value" > /proc/sys/location/variable 
+Method # 2: Temporary on the command line
+Use sysctl command with -w option when you want to change a sysctl setting:
+sysctl -w variable=value
+Method # 3: Configuration file /etc/sysctl.conf
+This is recommended way. First open /etc/sysctl.conf file, enter:
+# vi /etc/sysctl.conf
+Now add value:
+variable = value
+Close and save the changes. Type the following command to load sysctl settings from the file /etc/sysctl.conf file:
+# sysctl -p
+ OR
+# sysctl -p /etc/sysctl.conf
+The last method will load settings permanently at boot time from /etc/sysctl.conf file.
+35)How to set default boot kernel in Linux
+Ans:-If you want to change the default kernel to a particular kernel version permanently, you can modify GRUB configuration as follows.
+First, list all available kernel images added to GRUB2 by running the following command.
+$ grep '^menuentry' /boot/grub2/grub.cfg
+Identify the GRUB menu entry for the kernel that you want to set as default. Each menu entry is assigned by GRUB2 a numeric value starting from 0 in an increasing order. That is, the first menu entry assigned 0, the second entry assigned 1, etc.
+Open /etc/default/grub with a text editor, and set GRUB_DEFAULT to the numeric entry value for the kernel you chose as the default. In this example, I choose the kernel 3.10.0-327 as the default kernel.
+GRUB_DEFAULT=2
+Finally, re-generate GRUB configuration.
+$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg 
+To change the default boot kernel "temporarily" from the command line. I assume that '2' is the numeric GRUB menu entry value of a kernel that you want to boot into during the next boot session. Replace the number with your own.
+[root~]# grub2-reboot 2
+[root~]# reboot 
+36)what is firmware
+Ans:- Firmware is software that is embedded in a piece of hardware. You can think of firmware simply as "software for hardware." 
+37)How to boot from a specific kernel
+Ans:- Choose the kernel from GRUB Menu - You need to have access to console for the same. Else you need to change the default kernel to chesse from the GRUB.
+38)How to update kernel
+Ans:- you can use yum install KernelRPM or You can also your rpm -ivh KernelPackageName command for the same. 
+39)How to create a local yum repo
+Ans:- Copy contents of DVD to local system and create a repo file in /etc/yum.repos.d/fileName.repo.
+The  contents looks like below:
+[name ]
+name=
+baseurl=
+enabled=1
+gpgcheck=1
+gpgkey=
+After create the above, use yum repolist command to build the repo database.
+40)How to configure  Jumbo Frames to Boost Network Performance / Throughput
+Ans:- Jumbo frames are Ethernet frames with more than 1500 bytes of payload MTU. Most recent Linux Kernel(Linux Kernel 2.6.17 and above) does support frames larger than 1500 bytes. This can improve the performance. 
+To configure Jumbo frames, first, make sure your network driver supports custom MTU. Second you need to have a compatible gigabit NIC and switch. Jumbo frames can reduce server overhead such as a big decrease in CPU usage when transferring larger file. Also you should see some increase in network throughput.
+Issue the following command at a shell prompt to set new MTU (Jumbo Frames):
+# ifconfig eth0 mtu 9000 
+Make changes permanent
+Edit the network configuration file for eth0 interface – for example, /etc/sysconfig/network-script/ifcfg-eth0:
+# vi /etc/sysconfig/network-script/ifcfg-eth0
+Append the following configuration directive, which specifies the size of the frame in bytes:
+MTU 9000
+Close and save the file. Restart the Interface eth0:
+# service network restart 
+41)What is MTU
+Ans:-A maximum transmission unit (MTU) is the largest size packet or frame, specified in octets (eight-bit bytes), that can be sent in a packet- or frame-based network such as the Internet. The Internet's Transmission Control Protocol (TCP) uses the MTU to determine the maximum size of each packet in any transmission. The default MTU is 1500.
+42)How to Create LVM
+Ans:- Create LVM partition or get the whole disk
+      create pv using pvcreate [disk] or pvcreate [disk partition]
+      create using vgcreate -s pesize vgname /dev/pvname
+      create lv using lvcreate -L sizeOfLV -n Lvname Vgname
+      create filesytem usiing mkfs.ext4 /dev/mapper/vgname-lvname
+      create a directory for mount point and add entry in /etc/fstab appropriately
+43)Difference between Linux Partitions and Linux LVM partitions
+Ans:-LVM deals with extents and has multiple additional layers of abstraction that clearly need to be considered during boot - whereas the standard Linux partition should be a lot more starightforward than LVM. Id 83 is for Linux native partitions and 8e is for Linux LVM Partition.        
+44)Why iS LVM used
+Ans:- Provides more flexibility in space allocation. 
+
+45)How to force yum update command to exclude certain Packages
+Ans:- You can user yum --exclude command, example:
+ # yum --exclude=package\* update
+ # yum --exclude=php\* update
+ # yum --exclude=kernel\* update
+ # yum -x 'kernel*' -x 'php*' update
+Otherwise, Yum uses a configuration file at /etc/yum/yum.conf or /etc/yum.conf. You need to place exclude directive to define list of packages to exclude from updates or installs. There should be a space separated list. Shell globs using wildcards * and ? are allowed.For example, append the following line under [main] section, enter:
+exclude=php* kernel* (this is to exclude php and kernel packages)
+46. An application is creating several, very large core dump files. What should the administrator do if he has no intention of debugging these files?
+ If administrator have no intention of keeping these files for debugging purposes, they should be deleted because they are wasting valuable disk space, and may cause system to run out of space.
+
+47. What sort of kernel error can cause a Linux system to crash and write a memory core dump?
+ Kernel panic error can cause a Linux system to crash. A kernel panic indicates that a kernel process has crashed. This is a very serious error that causes the entire Linux system to crash. These core dumps should be analyzed carefully to find the root cause of the problem.
+
+48. As a administrator you may need to terminate some process. For example lets say the sendmail process. How will you kill the process?
+ First you need to determine the PID of sendmail so it can be killed.
+ #ps -ef |grep sendmail
+ Now you can use kill command to terminate the process associated with sendmail.
+
+
+49. You noticed a kernel error message during the boot process, but it scrolled before you could read this? What log file could you check to find out that message?
+ The log file that contains kernel boot messages is /var/log/dmesg.
+
+50. You execute a command that is going to take a long time. How can you get back to your shell prompt to perform other task?
+ You can use bg command to send a running process to the background.
+
+51. You need to kill all instances of Web Server? What command will you execute to do this?
+ You can use killall httpd command to kill all httpd process. httpd process run web server.
+
+52. How can you list all running process?
+ Use ps -ef command to list all running process.
+ #ps -ef
+
+53. As a Linux admin you want to know what processes are being run by user sumit. What command can you use ?
+ You can use #ps -au command to list all the process owned by user. Following command will do the assigned task.
+ #ps -au sumit
+
+54. Which log file keeps track of all user logins and logouts?
+ /var/log/wtmp log file keeps track of all user logins and logouts.
+
+55. What is the first process that is run when a Linux system starts, and is responsible for starting all other system processes and services?
+ The init process is the first process to be run. It is the parent process of all other Linux system processes, services, and daemons that are needed to run the system.
+
+56. An administrator has accidentally killed a core process. What is the result of this action?
+ Killing a core process can potentially crash your system because many critical services rely on these core processes
+
+57. As a administrator you need to monitor the /var/log/messages file in real time to resolve the issue? How would you do that?
+ You can use tail command with -f option. Following command will do the assigned task
+ #tail -f /var/log/messages
+
+58. From the output of ps command how will you determine the ID number of the parent process of a particular program?
+ PPID refers to the parent process identification number.
+
+59. While scanning the /var/log/messages file, you notices an error stating an authentication failure for root. What could this mean?
+ Any failed login attempts for root are logged into the /var/log/messages file. It indicate that some one has tried to login as root.
+
+60. As an administrator you noticed from top command that an unidentified process is using up all CPU and memory. You suspects that is a user's process that has run away. How should you fix this ?
+ The process should be immediately killed before it consumes so many resources that the server cannot run properly, and therefore crash.
+
+61. What command can an administrator use to track real-time information on processes and the resources that they are using?
+ The top command is used to monitor processes and resources in real-time.
+
+62. Why should you periodically update the kernel and package versions?
+ To enhance the security of system you should ensure that you are using the latest versions kernel and software packages that contain the most recent security updates.
+
+63. During a recent strikes at office, several archive tapes of the system were damaged and ruined. What can you do to prevent the physical damage in future?
+ You should store them at offsite.
+
+64. Why should you avoid the Telnet to administer a Linux system remotely?
+ Telnet use most insecure method for communication. It send data across the network in plain text format. Someone easily find out the password using the network tool.
+
+65. Your company hire a contract employee for two months. What should the Linux administrator do to enhance security on the employee's account?
+ While creating new user account for this user, administrator should set the expiration date for his account, so that if the employee leaves or does not have their contract renewed, the account will be automatically disabled.
+
+66. A user complains you that he is unable to set '123' as his password. Why would not the system allow this password?
+ There would be a minimum length rule for password, which is blocking user to use this password. Default minimum length rule for password is six characters. It means a user cannot have password less than six characters.
+
+67. Your company is running Web Server. One dedicate account holder customer complains that his visitors are able to scan the directory tree. Which directive would you configure to stop web server from listing the directory?
+ You should remove / comment the "Options Indexes" directive from the main configuration file ' httpd.conf' of the web server. This is a security measure so that remote users can’t scan the directory tree of the server looking for security holes. Server won’t show directory listings if requested by a user.
+
+68. How can you enhance the security of password file?
+ Linux keep user account information in a text file called /etc/passwd. This file also store one way encrypted password. This file is accessed by several tools to get user information, so file need to world readable. This is a security risk. To minimize the security risk you can use shadow password format. This method save account information in regular file /etc/passwd. However, the password is stored as a single "x" character (not actually stored in this file). A second file, called "/etc/shadow", contains encrypted password as well as other information such as account or password expiration values, etc. The /etc/shadow file is readable only by the root account and is therefore less of a security risk
+
+69. You have just finished the installation of sever. This server is going to be use as file server. Default installation have send mail service running, while this server will never send any e-mails. How should you deal with send mail service?
+ You should disable the send mail service if server is not being used for mail purpose. Leaving them running can increase the chance of a security vulnerability being exploited, and unauthorized use of sendmail relay.
+
+70. Which necessary steps should you take to enhance the security of server just after the initial installation?
+ Kernel and packages should be upgraded to the latest versions.
+ Unnecessary services and daemons should be disable.
+ Enable and configure firewall
+ Set a complex password policy.
+
+71. You are setting up an FTP server. Only company employees are allowed to use the FTP services. What should you configure on the FTP server to enhance security?
+ You should disable the anonymous FTP account, so that only users with a username and password can access the system.
+
+72. What is the location of system configuration files that should be backed up on a regular basis?
+ The /etc directory contains most of the Linux system configuration files.
+
+73. Due to power fluctuation, your system starts up from a powered off state. You receive a warning error stating that the machine was not shut down properly, and fsck will be run. What is the cause of this message?
+ If your hard drive file systems are not unmounted properly, the fsck utility will automatically run the next time the system is started to fix any inconsistencies before they are mounted again. If they are not fixed, the file system can quickly become corrupt.
+
+74. When you try to boot a Linux system, you receive a message stating that it cannot mount the /home partition because of errors. While debugging , you found that it occur due to data error. What can you do to fix the problem?
+ You can use fsck utility that enable you to recover from the errors.
+
+75. During a software package installation, an error occurs warning that a certain library is missing, and the installation aborts. What is the most likely cause of the problem?
+ Many software packages are dependent on other programs to function properly. If these dependencies do not exist, you must install them before installing your software package or install the package using yum to avoid dependency issues.
+
+76)What to do if /var filesystem in linux is completely full ?
+
+77)How to change Duplex and/or Auto-Negotiation NIC settings in Linux?
+Ans:-ethtool -s eth0 autoneg off duplex full speed 100
+
+78)How to check LAN card is full duplex or half speed
+Ans:- ethtool eth0
+
+79)How to Setup eth0 negotiated speed
+Ans:-
+ # ethtool -s eth0 speed 100 duplex full
+ # ethtool -s eth0 speed 10 duplex half
+To make this behaviour to be permanent add line in /etc/sysconfig/network-scripts/ifcfg-eth0:
+ETHTOOL_OPTS="speed 100 dumplex full autoneg off"
+80)Explain /etc/hosts
+Ans:- Used to hostname resolutions defined locally to the server. It got format of IP and Hostname Mapping. It is always best practice to resolve hostname with DNS, rather locally until unless there is a reason for the same.
+
+81)How can I recover my RedHat if it BOOTs to a “Kernel Panic” error
+Ans:-There can be several reasons for a kernel panic. But you can always boot the system with a resue cd. Once you have booted, you can try to undo the things you have done to cause the kernel panic. 
+For example, you may encouter a kernel panic because initrd was'nt loading the ext3 modules properly and the kernel couldnt mount the root partition successfully. It obvious that most kernel panics are caused by the inability of the kernel ( because you upgraded your filesystem but forgot to include support or you configured your boot loaded to pass the wrong root device to the kernel or some other screw-up on your part apart from hardware failure ). The panic is caused usually by an action on the user side. When you do something sensitive like upgrade the kernel or mess around with the boot loader, be sure to back up the original conf files and also to find a way to revert like filesystem migration that you did. Have a bootdisk / rescue CD handy so that you can mount the root filesystem, chroot to it and put things back in place. Well, that's about all one can do, I guess.
+
+82)How do I re-register my system with Red Hat Network (RHN) Classic or Red Hat Network Satellite ?
+Ans:-
+rhnreg_ks --username=<RHN or Satellite login> --password=<RHN or Satellite password> --force
+
+83)Why is  kernel upgrade needed in Linux
+Reasons:
+  a)Security Fixes
+  b)Stability Improvements
+  c)Updated Drivers
+  d)New Kernel Functions
+  c)Increased Speed
+
+
+83. Why to use NFS ? 
+Ans: A Network File System (NFS) allows remote machine to mount file systems over a network and interact with those file systems as though they are mounted locally. This enables system administrators to consolidate resources onto centralized servers over the network.
+  
+84. What is the default port of NFS server ? 
+Ans: By default NFS uses 2049 TCP port.
+  
+85. What are different versions of NFS Server ? 
+Ans: Currently, there are three versions of NFS. NFS version 2 (NFSv2) is older and widely supported. NFS version 3 (NFSv3) supports safe asynchronous writes and is more robust at error handling than NFSv2; it also supports 64-bit file sizes and offsets, allowing clients to access more than 2Gb of file data.
+  
+NFS version 4 (NFSv4) works through firewalls and on the Internet, no longer requires an rpcbind service, supports ACLs, and utilizes stateful operations. Red Hat Enterprise Linux 6.X & Centos 6.X supports NFSv2,NFSv3, and NFSv4 clients. When mounting a file system via NFS, Red Hat Enterprise Linux uses NFSv4 by default, if the server supports it. 
+
+86. What are configuration files of NFS server ? 
+Ans: '/etc/exports' is the main configuration file that controls which file systems are exported to remote hosts and specifies options.
+'/etc/sysconfig/nfs' is the file through which we can fix ports for RQUOTAD_PORT, MOUNTD_PORT, LOCKD_TCPPORT, LOCKD_UDPPORT and STATD_PORT 
+
+87. What are different options used in /etc/exports file ? 
+Ans: Below are list of options used in /etc/exports file : 
+	ro: The directory is shared read only; the client machine will not be able to write to it. This is the default. 
+	rw: The client machine will have read and write access to the directory. 
+	root_squash: By default, any file request made by user root on the client machine is treated as if it is made by user nobody on the server. (Exactly which UID the request is mapped to depends on the UID of user "nobody" on the server, not the client.) 
+	no_root_squash : if this option is used , then root on the client machine will have the same level of access to the files on the system as root on the server. This can have serious security implications, although it may be necessary if you want to perform any administrative work on the client machine that involves the exported directories. You should not specify this option without a good reason. 
+	no_subtree_check : If only part of a volume is exported, a routine called subtree checking verifies that a file that is requested from the client is in the appropriate part of the volume. If the entire volume is exported, disabling this check will speed up transfers. 
+	sync : Replies to the NFS request only after all data has been written to disk. This is much safer than async, and is the default in all nfs-utils versions after 1.0.0. 
+	async : Replies to requests before the data is written to disk. This improves performance, but results in lost data if the server goes down. 
+	no_wdelay : NFS has an optimization algorithm that delays disk writes if NFS deduces a likelihood of a related write request soon arriving. This saves disk writes and can speed performance 
+	wdelay : Negation of no_wdelay , this is default 
+	nohide : Normally, if a server exports two filesystems one of which is mounted on the other, then the client will have to mount both filesystems explicitly to get access to them. If it just mounts the parent, it will see an empty directory at the place where the other filesystem is mounted. That filesystem is "hidden". Setting the nohide option on a filesystem causes it not to be hidden, and an appropriately authorised client will be able to move from the parent to that filesystem without noticing the change. 
+	hide : Negation of nohide This is the default 
+88. How to list available nfs share on local machine & remote machine ? 
+Ans: 'showmount -e localhost' : Shows the available shares on your local machine
+'showmount -e <Remote-server-ip or hostname>': Lists the available shares at the remote server.
+  
+89. What is pNFS ? 
+Ans: Parallel NFS (pNFS) as part of the NFS v4.1 standard is available as of Red Hat Enterprise Linux 6.4. The pNFS architecture improves the scalability of NFS, with possible improvements to performance. That is, when a server implements pNFS as well, a client is able to access data through multiple servers concurrently. It supports three storage protocols or layouts: files, objects, and blocks.
+  
+90. What is the difference between Hard mount & Soft mount in nfs ? 
+Ans:  Difference between soft mount and hard mount is listed below : 
+	 Soft Mount : Consider we have mounted a NFS share using 'soft mount' . When a program or application requests a file from the NFS filesystem, NFS client daemons will try to retrieve the data from the NFS server. But, if it doesn’t get any response from the NFS server (due to any crash or failure of NFS server), the NFS client will report an error to the process on the client machine requesting the file access. The advantage of this mechanism is “fast responsiveness” as it doesn’t wait for the NFS server to respond. But, the main disadvantage of this method is data corruption or loss of data. So, this is not a recommended option to use. 
+	Hard Mount : Suppose we have mounted the NFS share using hard mount, it will repeatedly retry to contact the server. Once the server is back online the program will continue to execute undisturbed from the state where it was during server crash. We can use the mount option “intr” which allows NFS requests to be interrupted if the server goes down or cannot be reached. Hence the recommended settings are hard and intr options. 
+
+91. How to check iostat of nfs mount points ? 
+Ans: Using command 'nfsiostat' we can list iostat of nfs mount points. Use the below command :
+# nfsiostat < interval> <count> <mount_point> 
+<interval> : specifies the amount of time in seconds between each report. The first report contains statistics for the time since each file system was mounted. Each subsequent report contains statistics collected during the interval since the previ-ous report. 
+<count> : If the <count> parameter is specified, the value of <count> determines the number of reports generated at seconds apart. if the interval parameter is specified without the <count> parameter, the command generates reports continuously. 
+<mount_point> : If one or more< mount point> names are specified, statistics for only these mount points will be displayed. Otherwise, all NFS mount points on the client are listed.
+  
+92. How to check nfs server version ? 
+Ans: 'nfsstat -o all' command shows all information about active versions of NFS.
+  
+93. What is portmap? 
+Ans: The portmapper keeps a list of what services are running on what ports. This list is used by a connecting machine to see what ports it wants to talk to access certain services.
+  
+94. How to reexport all the directories of '/etc/exports' file ? 
+Ans: Using the command ' exportfs -r ' , we can reexport or refresh entries of '/etc/exports' file without restarting nfs service.
+
+95. How to retrieve a list of clients connected to the NFS server ?
+
+Ans:-To retrieve a list of clients connected to the NFS server, use the showmount command
+from a shell prompt. To also show the directories the clients are connected to, use the
+showmount -a command.
+
+96.What is meaning of "no_root_squash" option ?
+Ans:-
+Treat remote root user as local root. Do not map requests from root to the anony-
+mous user and group ID.
+
+97.  Can we grant access by Username and password for nfs share? 
+Ans:-No, access is granted only for IP address.
+
+98. What is the role of "all_squash" option? 
+Ans:-Treat all client users as anonymous users. Map all user and group IDs to the anonymous user and group ID.
+
+99. What is the role of "root_squash" option?
+Ans:-All requests from the user root are translated or mapped as if they came from the user anonymous (default).
+
+100.Explain option "all_squash"?
+Ans:-The UID and GID of exported files are mapped to the user anonymous. It is good for public directories.
+
+101.Explain "exportfs" command?
+Ans:-The exportfs command is used to maintain the current table of exported file systems for NFS.
+
+102.Explain command "/usr/sbin/exportfs -f"?
+Ans:-It will flush everything out of the kernels export table. Any clients that are active will get new entries added by mountd when they make their next request.
+
+103.What is the role of "all_squash" option? 
+ANS:Treat all client users as anonymous users. Map all user and group IDs to the anonymous user and group ID.
+
+104.What is the role of "root_squash" option?
+ANS:All requests from the user root are translated or mapped as if they came from the user anonymous (default).
+
+105.Explain option "all_squash"?
+ANS:The UID and GID of exported files are mapped to the user anonymous. It is good for public directories.
+
+106.Explain "exportfs" command?
+ANS:The exportfs command is used to maintain the current table of exported file systems for NFS.
+
+107.Explain command "/usr/sbin/exportfs -f"?
+ANS:It will flush everything out of the kernels export table. Any clients that are active will get new entries added by mountd when they make their next request.
+
+108.Which option is used with exportfs command to display the current export list, also displays the list of export options?
+ANS:exportfs -v
+
+109.Which option is used with exportfs command to re-export all directories?
+ANS:exportfs -r
+
+110.How you will export directory (/data) to host 192.168.1.51, allowing asynchronous writes without adding the entry in /etc/exports file?
+ ANS:# exportfs -o async 192.168.1.51:/data
+
+111.Is rpc.mountd daemon supports TCP_WRAPPERS?
+ANS:Yes, The rpc.mountd daemon is protected by the tcp_wrappers. You have to give the clients access to rpc.mountd if they should be allowed to use NFS Server.
+
+112. Explain "nfsstat" command?
+ANS:The nfsstat command displays the statistics about NFS client and NFS server activity.
+
+113. What do you understand by "nfsstat -o all -234" command?
+ANS:It will Show all information about all versions of NFS.
+
+114. What do you understand by "nfsstat --nfs --server -3" command?
+ANS:It will show statistics for NFS version 3 server.
+
+115.Can NFS share mounted on Window XP and Justify your answer?
+ANS:No, Window XP operating system doesn’t support nfs protocol.
+
+116.192.168.1.51:/data is exported by NFS Server and i want to add this NFS share to client /etc/fstab file. How you will add this entry in /etc/fstab file?
+ANS:# device                      mount-point     fs-type     options      dump   fsckorder
+192.168.1.51:/data            /mnt           nfs               defaults             0         0
+
+117.Explain "Soft Mounting" option at NFS Client?
+
+ANS:if a file request fails, the NFS client will report an error to the process on the client machine requesting the file access. if it cannot be satisfied (for example, the server is down), then it quits. This is called soft mounting.
+
+118.Explain "Hard Mounting" option at NFS Client?
+ANS:If a file request fails, the NFS client will report an error to the process on the client machine requesting the file access. if it cannot be satisfied, then it will not quit until the request is satisfied. This is called Hard mounting.
+
+119.How you will check "portmap" service is running or not? 
+ANS:rpcinfo -p
+
+120.Explain page in and page out in OS memory management ? 
+
+121.How to execute cron every 5 min from Monday to Friday? 
+Ans:- put entry in crontab - used crontab -e command and add the line "*/5 * * * 1-5  /path/to/script"
+
+122.Difference between -L & -l in lvcreate command ? 
+Ans:- -L is to give size of LV (in MBs or GBs) and -l is number of LE's
+
+123.What is POST in Linux Booting Process ? 
+Ans:- Used to check all basic hardware components are in functional state or not.
+
+124.What is initrd or ramdisk and use of initrd while booting ? 
+Ans:-The initial RAM disk (initrd) is an initial root file system that is mounted prior to when the real root file system is available. The initrd is bound to the kernel and loaded as part of the kernel boot procedure. The initrd contains various executables and drivers that permit the real root file system to be mounted, after which the initrd RAM disk is unmounted and its memory freed.
+
+125.What is wwpn & wwnn ?
+Ans:-
+WWN - World Wide Name is a unique identifies on a Fiber Channel adapter similar to the MAC address of an ethernet adapter 
+WWPN - World Wide Port Name is another name for the WWN assigned to the port on FC fabrice
+
+126.What is multipathing and why is it required ? 
+Ans:-
+Multipathing is the technique of creating more than one physical path between the server and its storage devices. It results in better fault tolerance and performance enhancement. 
+
+
+127.what is iostat , describe its output and log files ? 
+Ans:-The iostat command is used for monitoring system input/output device loading by observing the time the devices are active in relation to their average transfer rates.
+
+128.What is the difference of 2.4 and 2.6 kernel ? 
+Ans:-Till 2.4 the kernel level process pre-emptive was not available and resulted in race condition. This is the most important change in the 2.6 Kernel.
+ 

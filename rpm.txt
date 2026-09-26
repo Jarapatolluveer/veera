@@ -1,0 +1,35 @@
+How to mound DVD or ISO image in Linux:
+--------------------------------------
+Mount DVD:
+mount -o ro /dev/cdrom /mnt
+to mount iso image:
+mount -o ro,loop /PathtoIsoImage /mnt
+Red hat package Manager:
+------------------------
+rpm is the default, open source and most popular package management utility for redhat systems like rhel, centOS and Fedora. This tool allows system administrators to install,update, uninstall, query, verify and manage system software packages in linux. The RM package, known as .rpm file, that includes compiled software programs and libraries neccessary by the package. rpm command only works with packages that built on .rpm format. 
+
+rpm keeps information installed packages under /var/lib/rpm database. rpm is the only way to install packages under linux systems. The rpm deals with .rpm files which contain the actual information about packages such as package name, dependencies, versions etc.,
+
+rpm commands summary:
+--------------------
+rpm -qa: it gives the list of all installed rpms in the system
+rpm -q rpmname
+rpm -qa | grep packagename
+rpm -qi package : provides the package ifnormation
+rpm -ql packagename " listthe files installed by the package
+rpm -qf /path/to/file : Tells the given binary or file belongs to which package
+rpm -qc openssh-server : list only the configuration files that are installed as part of the given package.
+rpm -qd openssh-server: prints differnt man page files as part of this package
+rpm -q --scripts  openssh-server : list shell scrips that run before and after package is installed or removed.
+rpm -ivh packageName 
+	-i :install
+	-v: verbose
+	-h: print hash codes while installing
+       --force : force installation
+       --replacepkgs : Replace packages if Package is already installed.
+rpm -qpR PackageName : Find out dependency packages recursively.
+rpm -evh PackageName
+	-e :erase
+rpm -Uvh rsync-3.1.3-9.el8.x86_64.rpm
+	wher -U upgrade
+

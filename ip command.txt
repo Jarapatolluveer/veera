@@ -1,0 +1,101 @@
+The ip command:-
+You can configure a network interface using the ip command, but changes are not persistent across reboots; when you reboot, you will lose any changes. 
+The ip commands can be used to add and remove addresses and routes to interfaces.ip utility replaces the ifconfig utility.ip commands given on the command line will not persist after a system restart. Where persistence is required, make use of nmcli command utility.
+Syntax:-
+ip OBJECT COMMAND
+or
+ip [options] OBJECT COMMAND
+or
+ip OBJECT help
+1.To list and show all ip address associated on on all network interfaces:
+ip a
+OR
+ip addr
+2.
+To assign IP addresses to an interface with the following form: 
+ip addr [ add | del ] address dev ifname
+Examples:
+# ip address add 10.0.0.3/24 dev enp1s0
+You can view the address assignment of a specific device:
+# ip addr show dev enp1s0
+ enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether f0:de:f1:7b:6e:5f brd ff:ff:ff:ff:ff:ff
+    inet 10.0.0.3/24 brd 10.0.0.255 scope global global enp1s0
+       valid_lft 58682sec preferred_lft 58682sec
+    inet6 fe80::f2de:f1ff:fe7b:6e5f/64 scope link
+       valid_lft forever preferred_lft forever
+
+Configuring Multiple Addresses Using ip Commands:
+
+As the ip utility supports assigning multiple addresses to the same interface it is no longer necessary to use the alias interface method of binding multiple addresses to the same interface. The ip command to assign an address can be repeated multiple times in order to assign multiple address. 
+# ip address add 192.168.2.223/24 dev enp1s0
+# ip address add 192.168.4.223/24 dev enp1s0
+# ip addr
+enp1s0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP qlen 1000
+    link/ether 52:54:00:fb:77:9e brd ff:ff:ff:ff:ff:ff
+    inet 192.168.2.223/24 scope global enp1s0
+    inet 192.168.4.223/24 scope global enp1s0
+
+3.
+Remove / Delete the IP address from the interface. The syntax is as follows to remove an IPv4/IPv6 address:
+ip a del {ipv6_addr_OR_ipv4_addr} dev {interface}
+Example:
+To delete 192.168.1.200/24 from eth0, enter: ip a del 192.168.1.200/24 dev eth0
+4.
+How do I change the state of the device to UP or DOWN?
+The syntax::
+ip link set dev {DEVICE} {up|down}
+To make the state of the device eth1 down, enter:
+ip link set dev eth1 down
+To make the state of the device eth1 up, enter:
+ip link set dev eth1 up
+5.How do I change the MTU of the device?
+For gigabit networks you can set maximum transmission units (MTU) sizes (JumboFrames) for better network performance. The syntax is:
+ip link set mtu {NUMBER} dev {DEVICE}
+To change the MTU of the device eth0 to 9000, enter:
+ip link set mtu 9000 dev eth0
+ip a list eth0
+5.
+Display neighbour/arp cache
+The syntax is:
+ip n show
+ip neigh show
+6.
+Ip route: Routing table management commands
+
+Use the following command to manage or manipulate the kernel routing table.
+To display the contents of the routing tables:
+ip r
+ip r list
+ip route list
+ip r list [options] ip route
+
+Add a new route
+
+The syntax is:
+ip route add {NETWORK/MASK} via {GATEWAYIP}
+ip route add {NETWORK/MASK} dev {DEVICE}
+ip route add default {NETWORK/MASK} dev {DEVICE}
+ip route add default {NETWORK/MASK} via {GATEWAYIP}
+Example:
+Add a plain route to network 192.168.1.0/24 via gateway 192.168.1.254:
+ip route add 192.168.1.0/24 via 192.168.1.254
+To route all traffic via 192.168.1.254 gateway connected via eth0 network interface:
+ip route add 192.168.1.0/24 dev eth0
+
+Delete a route
+The syntax is as follows to delete default gateway:
+ip route del default
+In this example, delete the route created in previous subsection:
+ip route del 192.168.1.0/24 dev eth0
+
+
+Netstat Command:-
+netstat (network statistics) is a command line tool for monitoring network connections both incoming and outgoing as well as viewing routing tables, interface statistics etc.
+1.netstat -a : Listing all ports (both TCP and UDP) using netstat -a option.
+2.netstat -at: Listing only TCP (Transmission Control Protocol) port connections using netstat -at.
+3.netstat -au: Listing only UDP (User Datagram Protocol ) port connections using netstat -au.
+4.netstat -l:  Listing all active listening ports connections with netstat -l.
+5.netstat -r or netstat -nr: Display Kernel IP routing table with netstat and route command.
+6.netstat -i:  Showing Network Interface Transactions
+7.netstat -Iens192  

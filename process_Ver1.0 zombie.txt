@@ -1,0 +1,187 @@
+                                                                                                                                                                                                                                              fork: Fork is a system call which is used to create a process. Whenever, there is no enough RAM(or real memory) exists to create a process,           the fork cammand will fail.
+-----
+Process:- A process is a program in running state. A process consists of 
+1. An address spacce of all allocated memory.
+2. Security properties that includes ownership, credentials and previleges.
+3. The process state
+4. One or more execution threads of a program code.
+The environment of a process includes 
+1. local  variables.
+2. global variables.
+3. Allocated System resources such as file descriptors(0 for input, 1 for output, 2 for error etc) and network ports.
+Every process is assigned with an unque numeric number called process id. When you execute a program, the program must be brough to the real memory before its execution.
+Cache memory is the fastest memory and  usually exists in the CPU in order to speed up the computation. The frequently used data is stored in the processor cache memory.
+Processor Affinity:-
+-------------------
+Incase of multiple CPUs and multiprogramming environment, the processor swich over multiple program in round robin fashion. The pre-empted job will be scheduled with previously allocated CPU for better performance. The is known as processor affinity.
+
+Processor Time Slice:- The processor time is divided in 10 milli seconds time slice, and allocated to all the processes in round robin fashion.
+Process state diagram:-
+-----------------------
+You have taken diagram to your note book.
+In multitasking environment, at any point of time, one CPU will address one process. Processes are assigned a state, which changes as circumstances required.
+Process life cycle:-
+-------------------
+fork:-
+------  
+Fork is a system call which is used to create a new process. Every new process is assigned an unique process ID(PID). Every process will have a parent process and is referenced by parent process ID(PPID). PID and PPID are the element of a process.
+
+'init (or Systemd in RHEL7 onwards)' is the parent process of all the processes in the system. The init(or Systemd) process PID is 1 which is the process that is started first time when the system boots.
+
+A child program executes its own program code. Normally a parent process sleeps while the child process runs; setting a request(wait) to be signalled when the child process completes. Upon exit, the child process has already closed or discarded its resources and environment. The remainder is referred as a zombie. 
+
+Zombie or Defunct process:- A child process signals its parent as it exits. All resources except for the process identity(PID) are released. This is known as zombie state of a process. 
+
+Below are some the process state that a process will have at any single point of time while it is running.
+As a process runs, its immediate requirements for CPU time and resource allocation change. Processes are assigned a state which chanages as circumstances required.
+
+Name		Flag		Kenel Defined stats name and descriptions
+-------------------------------------------------------------------------------
+Running		R		Process is either executing or waiting to run
+
+Sleeping	S		Process is waiting for some condition
+		D		The task is sleeping and uninterruptable
+		K		Sleeping and killable
+
+Stopped		T		Task is stopped
+
+Zombie		Z		All resources except PID are released.
+
+To list cpus in the system:-
+----------------------------
+use command: lscpu
+or cat /proc/cpuinfo
+System load:-
+-----------
+Use command: uptime to know the system load average. uptime will also tell how long the system has been running.
+uptime  gives  a one line display of the following information.  The current time, how long the system has been running, how many users are currently logged on, and the system load averages for the past 1, 5, and 15 minutes.
+[root@trainer ~]# uptime
+ 14:50:10 up  9:31,  2 users,  load average: 0.02, 0.02, 0.05
+If the load average exceeds number of CPU in the system, then it is not good value. When more jobs that number of CPUs are waiting in the run queue, it indicates the system is busy and job are in waiting for cpu attention.
+
+Listing processes:- We use ps command to list processes.
+----------------
+ps:- (process state): is a command used to list current processes in the system. This command provides detailed process information such as 
+1. process owner
+2. PID(process ID)
+3. CPU
+4. Memory
+5. State etc.,
+
+Examples:- 
+ 1. ps -e for entire processes.
+ 2. ps -el -l where -e : enter processes and l for long list
+ 3. ps -e -l -f where -f is for formatted output
+
+Controlling the process using kill command:- 
+------------------------------------------
+kill command:-
+---------
+-->kill command is used to kill a process.
+syntax:- 
+ 	kill -signalNumber PID 
+	ex:- kill -9 5090
+	where -9 is the signal for sure kill.
+	      -15: is the signal for SIGKILL (it is a request to kill, but its not gaurantee that the process will get killed)
+        Note: There are 1-64 signals.
+-->You can also use pkill commad to kill a process by giving process name.
+pkill -signal processName
+ex:-
+     pkill -9 java
+-->You can use killall command to kill one or more proccesses matching selection criteria, such as command name or process specified or all system wide processes.
+   example:- killall -9 prg*
+-->jobs command:-
+	jobs command used to list processes that are running in the background.
+	Syntax:-
+		jobs
+		or
+		jobs -l
+-->The script or a program or a command that you are executing must have executable permission to run. We can call the program with its name and when it starts running, it is known as a process. By default the process runs in the foreground(your terminal window, or /dev/tty). The terminal window device id (tty) is the process controlling terminal. Foreground process receives keyboard generated inputs and signals.
+-->The job can run either foreground or background.
+-->You can run the program in the background by placing & symbol at the end of the program. This will run the program in the background and prints the job number on the screen. You will get your shell prompt, so that you can continue your work. You can verify if the process is running is by using ps -ef | grep processName.
+-->fg command:-
+	fg command is using to bring the process to foreground. 
+		syntax:- fg %JobNumber
+                         ex:- fg %1034
+-->bg command:-
+	bg command is used to send the job to background.
+		syntax:- bg JobNumber
+	Note:- you can see job numbers using jobs -l command
+Note:- 1)tail -f Filename command will help you read the output from the file continuouslu which is getting updated from another process. 
+	2)You can print your shell PID with "echo $$" command.
+nohup:-
+------
+nohup command is used to tell shell to not to exit the program or command when you exit from the shell. if you exit from the shell the parent of job will be 'init' (ie PID 1). The shell will hand over the process to init daemon. If the program generates any output it will be stored in nohup.out if you are not redirecting the output to anyother file explicitly.
+nohup command is used to run a command to immune is such a way that when you exit the shell, the process will not be killed.
+Syntax:-
+	nohup /path/to/command &
+Note:- nohup.out file will be created in the same directory where you ran the command, and the ouptut will be redirected to nohup.out (appends lines). The file is only created if you havent redirected the output to any file.
+		Example:- nohup /root/scripts/prg57.sh &
+			or
+			  nohup /root/scripts/prg57.s > prg57.out 2>&1 &
+Note:- init(or Systemd in RHEL7 onwards) is a daemon, which is first daemon started when you start your system. This is parent of all processes and its PID is 1. The parent of init or Systemd is Sheduler(also known as Swapper) with PId 0, which is part of kenrel and it is not shown in ps command outut.
+
+Daemon:- A daemon is a process that runs continuously in the background. In RHEL, usually(not always) daemon names end with 'd' (example systemd, named, lvmd etc.,)
+
+ps command examples: 
+i) ps -e : list entire proesses in the system
+ii) ps -el : same as above, additionally log list
+iii) ps -elf : along with formatted output
+
+The heading appears as below:
+ F	S 	UID	PID	PPID 	C	PRI	NI	ADR	SZ	WCHAN	TTY	TIME 	CMD
+
+Flag (F): value 1 means, forked but did not execute. Value 4 used for super user privileges
+UID: User ID (Process owner)
+PID: Process ID
+PPID: Parent process ID
+C: CPU Utilization
+PRI: Priority
+NI: Nice value of a process
+ADDR: Process address space
+SZ: Size in Bytes. Approximate amount of swap space or size of the process
+WCHAN: Name of the Kernel function in which process is sleeping
+TTY: Controlling TTY terminal of the process
+TIME: Cumulative CPU time
+CMD: Command.
+8
+Process Priorities ( nice and renice):- 
+Using the nice and renice commands
+----------------------------------
+The nice and renice commands are used to change the priority of a process.The nice command runs another command at a different priority, while the renice command changes the priority of an already running process. The root user can increase or decrease the priority of any process. Other users can only  decrease the priority of processes they own.
+syntax:
+      nice [ - Increment| -n Increment ] Command [ Argument ... ]
+The Command parameter is the name of any executable file on the system. If you do not specify an Increment value, the nice command defaults to an increment of 10. The higher the nice value, the lower the priority.
+
+The nice value can range from -20 to 19, with 19 being the lowest priority. For example, if a command normally runs at a nice value of 20 (default value), specifying an increment of 5 runs the command at a nice value of 25, and the command runs slower. The nice command does not return an error message if you attempt to increase a command's priority without the appropriate authority. Instead, the command's priority is not changed, and the system starts the command as it normally would.
+
+Users with root authority can specify a negative increment that would increase the priority of the process. The following example shows the nice command running the cc command at a lower priority:
+# nice -n 15 cc -c *.c
+
+renice command:
+---------------
+renice [ -n Increment ] [ -g | -p | -u ] ID ...
+The parameter Increment specifies the number to add to the nice value of the process. The value of Increment can only be a decimal integer from -20 to 19.
+Positive increment values lead to a lower scheduling priority. Negative increment values require root privileges and lead to a higher priority.
+The specified Increment changes the priority of a process in the following ways:
+--> 1 to 19 Runs the specified processes slower than the base priority.
+--> 0 Sets priority of the specified processes to the base scheduling priority.
+-> -20 to -1 Runs the specified processes quicker than the base priority.
+The flags have the following meaning:
+-g Interprets all IDs as unsigned decimal integer process group IDs.
+-p Interprets all IDs as unsigned integer process IDs. The -p flag is the default if you specify no other flags.
+-u Interprets all IDs as user name or numerical user IDs.
+Ex:-
+To alter the system scheduling priority so that process IDs 987 and 32 have lower scheduling priorities, enter:
+# renice -n 5 -p 987 32
+To alter the system scheduling priority so that group IDs 324 and 76 have higher scheduling priorities (if the user has the root privileges to do so), enter:
+# renice -n -4 -g 324 76
+-------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

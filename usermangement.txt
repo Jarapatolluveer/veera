@@ -1,0 +1,400 @@
+10:48 15-04-2023UserManagement  Class notes:
+Sanjeevi Machina
+
+setting a password for a user:
+Syntax:-
+	passwd username : This command will change the password of the given user.
+       or passwd : This will change the password of currently logged in user
+When password been set to the user, an encrypted password been allocated and updated the same in /etc/shadow file.
+
+/etc/shadow:-
+This file consists of password information of a user. If no password been set, in the password files you will see !! symbols. It also consists of password aging policies which can be modified using chage command.
+
+/etc/shadow file format:
+
+Username:EncryptedPassword:LastChange:MinAge:MaxAge:Warning:Inactive:Expire:Blank
+
+Username: username field consists of a valid logini name
+Encripted Password: The encripted password of the user. If shown as '!!', then there is no passowrd been set. If its starts with ! symbol, the account is locked. The encripted password usually start with $ symbol.
+LastChange:- The date of the passowrd change; represented in epoch days (days elapased since 1st Jan 1970).
+MinAge: Minimum number of days before the password may be changed by the user. A zero (0) mean, no minimum password requirement.
+MaxAge: Maximum number of days before the password must change.
+WarningTime: Warning period that a password about to expire, represented in days. A zero mean,  no warning is given.
+Inactive:- number of days an account remain active after a passwrod has expired. After the specified number of days, the account is locked and become inactive.
+Expire: The account  expiration date, represented as the number of days since 1st Jan 1970(Epoc Days)
+Blank: Reserved for future use if any.
+
+Note:- Convert epoch days using as the given below example
+            date -d "01/01/1970 +17455 days"
+
+Chage command:-
+Used to  change user password aging policies as given below:
+chage - change user password expiry information
+Usage: chage [options] LOGIN
+
+Options:
+  -d, --lastday LAST_DAY        set date of last password change to LAST_DAY
+  -E, --expiredate EXPIRE_DATE  set account expiration date to EXPIRE_DATE
+  -h, --help                    display this help message and exit
+  -I, --inactive INACTIVE       set password inactive after expiration
+                                to INACTIVE
+  -l, --list                    show account aging information
+  -m, --mindays MIN_DAYS        set minimum number of days before password
+                                change to MIN_DAYS
+  -M, --maxdays MAX_DAYS        set maximim number of days before password
+                                change to MAX_DAYS
+  -R, --root CHROOT_DIR         directory to chroot into
+  -W, --warndays WARN_DAYS      set expiration warning days to WARN_DAYS
+
+	|	max days (-M)			 |
+	|----------------------------------------|
+	|					 |		    |
+	|					 |		    |
+	|	    :		     :		 | inactiveDays(-I) |
+	|MinDays(-m):		     :-----------|----------------- |
+	|-----------:		     :WarnDays(W)|		    |
+	|	    :		     : 		 |		    |
+Time----|-----------:----------------:-----------|------------------|-------------
+       Last                                 Password		  Inactive
+      Change(-d)                            Expiration		  Date(DD/MM/YY)  
+Note:- 
+					    Date (E)	
+
+i)in the /etc/shadow file, if you observe !! symbols in password file, it means password is not yet set.
+ii)in the /etc/shadow file, if you observe ! symbols, it mean the account is locked.
+Exercises:-
+----------
+Create a user called tom
+i)change minimum age to 10 days
+ii)change  max age of the password to 42 days
+iii)Change password warning days to 14 days
+iv)List existing password setting informations for the user tom
+v)Set the expiry date to 2018-12-31
+vi)Change last date change to todays date
+vii)Change tom's  password to never expire
+viii)set the user in such a way that, when ever user logins next time, the password should expire.
+ix)print defualt attributes of the user 
+
+Configuration files used while creating user:-
+---------------------------------------------
+a) /etc/passwd : contains user information
+b) /etc/shadow : Contains password and Age information
+c) /etc/group  : Contains group information
+d) /etc/gshadow : Contains password information for groups
+e) /etc/default/useradd : Contains defaults values that are  taken while creating user
+f) /etc/login.defs : Contains user login default settings.
+g) /etc/skel : Directory that contains user profiles and environment variable from where useradd command copy to 
+                users home directory at the time of creating user.
+
+The usermod command:-
+--------------------
+[root@server10 ~]# usermod
+Usage: usermod [options] LOGIN
+
+Options:
+  -c, --comment COMMENT         new value of the GECOS field
+  -d, --home HOME_DIR           new home directory for the user account
+  -e, --expiredate EXPIRE_DATE  set account expiration date to EXPIRE_DATE
+  -f, --inactive INACTIVE       set password inactive after expiration
+                                to INACTIVE
+  -g, --gid GROUP               force use GROUP as new primary group
+  -G, --groups GROUPS           new list of supplementary GROUPS
+  -a, --append                  append the user to the supplemental GROUPS
+                                mentioned by the -G option without removing
+                                him/her from other groups
+  -h, --help                    display this help message and exit
+  -l, --login NEW_LOGIN         new value of the login name
+  -L, --lock                    lock the user account
+  -m, --move-home               move contents of the home directory to the
+                                new location (use only with -d)
+  -o, --non-unique              allow using duplicate (non-unique) UID
+  -p, --password PASSWORD       use encrypted password for the new password
+  -R, --root CHROOT_DIR         directory to chroot into
+  -s, --shell SHELL             new login shell for the user account
+  -u, --uid UID                 new UID for the user account
+  -U, --unlock                  unlock the user account
+  -Z, --selinux-user SEUSER     new SELinux user mapping for the user account
+
+Shells supported by Linux:-
+a)/bin/sh : This is default shell for many unix operating systems
+b)/bin/bash : Default shell for Redhat Linux
+c)/bin/csh : c shell; interactive  login shell  and  a  shell script command processor for c program or scripts
+d)/bin/tsh : Enhanced csh.
+e)/sbin/nologin	: used to not to login to the system(no shell been provided to the user)
+
+To see current shell you logged in using the command : echo $SHELL
+You can change shell by using chsh command.
+if you are a root user, you can specify the user name as below:
+		$chsh username
+	       ex:- 
+	         chsh opsadm
+Create unix user manually without using useradd command:-
+Steps involved are:
+a) add entry in /etc/passwd, /etc/group, /etc/shadow
+b) create home directories, mail file in /var/spool/mail and provide appropriate permissions
+c) copy contents of /etc/skel to users home directory and provie appropriate permissions.
+
+Create set of users using newusers command:-
+--------------------------------------------
+create /etc/passwd like format stanzas into a file and use the below command
+Syntax:- newusers /path/to/UsersFile
+Note:- Files from /etc/skel are not copied and user's mail file will not be created, which should be done manually.
+Changing passwor for set of user with single command using chpasswd:
+-------------------------------------------------------------------
+create a files with username:passwd format  and provide the content of file as an input to chpasswd command. Explanation given below:
+Assume that you have users opsadm1,psadm2,psadm3,psadm4 and opsadm5 and you  want to set password for all these five users:
+vi pfile.txt
+opsadm1:opsadm1
+opsadm2:opsadm2
+opsadm3:opsadm3
+opsadm4:opsadm4
+opsadm5:opsadm5
+Now save the file  and user chpasswd < pfile.txt or cat pfile.txt|chpasswd. Now observe that all given users passwords are changed.
+
+groupmod command:-
+used to modify group attributes such as group name, group id, group password etc.,
+syntax: groupmod Options Groupname
+Options:
+  -g, --gid GID                 change the group ID to GID
+  -h, --help                    display this help message and exit
+  -n, --new-name NEW_GROUP      change the name to NEW_GROUP
+  -o, --non-unique              allow to use a duplicate (non-unique) GID
+  -p, --password PASSWORD       change the password to this (encrypted)
+                                PASSWORD
+  -R, --root CHROOT_DIR         directory to chroot into
+
+Groupmems command:-
+The groupmems command allows a user to administer his/her own group membership list without the requirement of superuser privileges.The groupmems utility is for systems that configure its users to be in their own name sake primary group (i.e., guest / guest). Only the superuser, as administrator, can use groupmems to alter the memberships of other groups.
+OPTIONS
+       The options which apply to the groupmems command are:
+       -a, --add user_name
+           Add an user to the group membership list.
+           If the /etc/gshadow file exist, and the group has no entry in the /etc/gshadow file, a new entry will be created.
+       -d, --delete user_name
+           Delete a user from the group membership list.
+           If the /etc/gshadow file exist, the user will be removed from the list of members and administrators of the group.
+           If the /etc/gshadow file exist, and the group has no entry in the /etc/gshadow file, a new entry will be created.
+       -g, --group group_name
+           The superuser can specify which group membership list to modify.
+       -h, --help
+           Display help message and exit.
+       -l, --list
+           List the group membership list.
+       -p, --purge
+           Purge all users from the group membership list.
+           If the /etc/gshadow file exist, and the group has no entry in the /etc/gshadow file, a new entry will be created.
+
+newgrp command:-
+newgrp - log in to a new group
+Syntax:-
+       newgrp [-] [group]
+The newgrp command is used to change the current group ID during login session. 
+      example:- newgrp colors
+
+Excercise:-
+-----------
+1. Remove read and write permissions for group and other on file01
+2. Add execute permission for everyone on file02
+3.Set read, write and execute permission for user, read and execute for group and no permissions for other on  directory called  'SampleDir'
+4.Create a directory in /home called 'ateam_test' and change the group ownership of the ateam_test directgory to 'áteam'
+5.Ensure the permissions of áteam_test'allows group members to create and delete files.
+6.Ensure the permissions of áteam_test'forbids others from accessing its files.
+7.Exit the root shell and swtich to the user "andy" with a password of 'password'
+8.Navigate to the /home/ateam_test directory and create a an empty file called andy_file3.
+9.Record default user and group ownship of new file and its permissions. Change the group ownshiop of the new file to áteam'and record the new ownship and permissions.
+10.Exit the shell and switch to user called "alice", with a password 'password'and navigate to the /home/ateam_test direcgtory. Determine alice privileges to access and or modify andy_file3
+11.Add andy to suppliment group called staff. When andy creates files, he need suppliment group to appear as group membership. What are the necessary steps to achieve this.
+
+pwck and grpck commands:-
+-----------------------
+pwck - verify integrity of password files.It checks that all entries in /etc/passwd and /etc/shadow have the proper format andcontain valid data. The user is prompted to delete entries that are improperly formatted or which have other uncorrectable errors.
+example:- pwck -r /etc/passwd
+              where -r : read only - prints the integrity report
+	  pwdck -s /etc/passwd
+	      where -s : sorts entries based on User Ids
+          pwdck /etc/passwd 
+	      tries to corrent integrity issues and user is prompted for confirmation (y or n)
+grpck - verify integrity of group files.It checks that all entries in /etc/group and /etc/gshadow have the proper format and contain valid data. The user is prompted to delete entries that are improperly formatted or which have other uncorrectable errors.
+
+Useful commands:-
+-----------------
+a)head: used print first 10 lines(by default) of a file. 
+Syntax:- head -n filename
+               Where -n is a number to represent how many line to be printed. If ignored first 10 lines will be printed on the screen
+b)tail command:-used print last 10 lines(by default) of a file. 
+Syntax:- tail-n filename
+               Where -n is a number to represent how many line to be printed. If ignored last 10 lines will be printed on the screen
+c)more command:- used print the content of file page by page. Enter key will scrol up one line and space bar will scrol up by one page. You can searh for a string with /String.
+Syntax:- more Filename
+         ex:- more /etc/group
+d)cat command:- used print the entire file on the screen.
+Syntax:- cat filename
+	 Ex:- cat /etc/group
+e)less cocmmand:- same as more - use b for backward and f for forward.
+
+f)write command:- write - send a message to another user
+Syntax:-
+       write user [ttyname]
+Note: End the communication with Ctrl-d key, which represents EOF (End of File)
+g)wall command:- write to all users
+Syntax:- wall "Message"
+ You can control the wall or write command broadcast by usinig mesg command.
+Syntax:- mesg n or y
+         to see the status, simply enter mesg.
+         Receiving broadcaset message is turned to NO. Which means, if other than root user sends a message, you will not receive (root is exempted)
+ 
+
+who command:-
+-------------
+used to print currently logged in users. It fetches the data from /var/run/utmp file. If this file doesnt exist for some reason, who comman will not show any data.
+
+w command:- same as who command, but format of the output shows in different way.
+
+last command:-
+show listing of last logged in users. It uses /var/log/wtmp file to read the last logged in users(also currently logged in users) and last system reboots, runlevel changes, system boot time stamps.
+To read wtmp like file:
+		      last -f /path/to/WtmplikeFile
+By defualt last command read /var/log/wtmp file to  print the data.
+to diplay last system reboots:
+Examples:-
+last -n 10
+last reboot -  This is a count telling last how many lines to show
+last -x
+  -x Display the system shutdown entries and run level changes.
+
+History:-
+prints last used command in the shell
+Exmaples:-
+1.history
+2.history 10
+   last 10 commands will be printed on the screen.
+Note: History of commands recorded in to the file called .bash_history in user's home directory.
+To clear history, use the below cammad.
+   		    history -c
+Using grep:-
+---------------
+grep is a command which uses regular expression to isolate matching data. The basic usage of grep is to provide a regular expression and a file on which the regular expression should be matched.
+Syntax:-
+ grep [OPTIONS] PATTERN [FILE...]
+
+Note:- because regular expression often contain shell metacharacters such as $ , * and others, it is recommended practice to use single quotes (') to encapsulate the regular expression on the command line.
+grep can be used in conjunction with other command using a | 
+examples:-
+	grep 'cat$' /usr/share/dict/words
+	who | grep ^student
+grep Options:-
+-------------------
+grep has many useful options for adjusting how it uses the provided regular expression with data:
+
+Option		Function
+--------------------------------------------------------------------------------------------------------------------------------------
+-i		Use the regular expression provided; however do not enforce case sensitivity
+-v		Only display lines that do not contain matches to the regular expression
+-r 		Search for data matching the regular expression recursively to a group of files or dirs
+-A  <Number>	Display <Number> of lines afterthe regular expression match
+-B <Number>	Display <Number> of line before the regular expression match
+-e 		with multiple -e options used, multiple regular exprpessions can be supplied and will be used with a 		logical or
+
+I/O Redirection:-
+-----------------
+A process structure is constructed with number of channels (file descriptors) to manage opened files. Process connect to files to read data contents or devices. Processes are created with default connections for channels 0, 1 and 2 known as standard input, standard output and standard error respectively. Processes use channel 3 and above to connect to other files.
+-------------------------------------------------------------------------------------------------------
+Number		Channel Name		Description		Default Connection		Use
+-------------------------------------------------------------------------------------------------------
+
+0		Stdin			Standard Input		Keyboard			Readonly
+1		StdOut			Standard Output		Terminal			WriteOnly
+2		StdErr			Standard Error		Terminal			WriteOnly
+3+		FileName		Other Files		22None				Read and(or)Write
+--------------------------------------------------------------------------------------------------------
+
+
+Redirecting Output to a file:-
+-----------------------------
+Channel redirection replaces default channel destinations with file names representing either output files or device. Using redirection,  process output and error messages can be captured as file contents, sent to a device or discarded
+
+Redirecting standard output suppresses process output from appearing on the terminal. Redirecting standard ouptut does not supress standard error messages from displaying on the terminal. The special file /dev/null quietly discards channel output redirected to  it.
+
+Examples:-
+1. Save timestamp for later reference to a file.
+	$ date > /tmp/saved.timestamp
+2. Copy last 100 lines from a log file to another file
+	$ tail -n 100 /var/log/dmesg > /tmp/last_100_bootMessages.txt
+3. Concatenate(append) four lines into one.
+	$ cat file1 file2 file3 file4 > /tmp/All_Four_InOne.txt
+4. List the home directory's hidden and regular file name into a file.
+	$ ls -a > /tmp/myFileNames.txt
+5. Append output to an existing file
+	$ echo "New Line For Information">> /tmp/InfoFile.txt
+
+File Descriptors:-
+
+When a ommand begins running, it usually expects that the following files are already open: standard i/p, standard o/p and standard error. A number called a file descriptor associated with each of these files. The default assignments for these descriptors are as follows:
+	
+0 : Represents std i/p
+1 : Represents std o/p
+2 : Represents std Error
+These file descriptors are connected by default to the terminal, so that if a program reads file descriptor "0"and write file descriptor 1 and 2, the program collects iniput from the terminal and sends output also to the terminal.
+
+Redirecting Input:-
+------------------
+When the notation "< Filename" is added to the end of the command, the default file descriptor for i/p of the command is changed and input is read from the specified file name.
+
+The < (less than) symbol is known as input redirectgorion operator. For example, send the file called 'letter.txt" to user called trainer with mail command, type : 
+		$ mail trainer < letter.txt
+Redirecting output:-
+------------------
+The output of a command can be redirected to a file typically the command followed by the notation "> Filename". For example, to save the value of the PATH variable on file, type
+						$ echo $PATH > mypath.txt
+					Verify with : $ caat mypath.txt
+
+Redirecting output and appending to a file:-
+--------------------------------------------
+When nthe notation ">> FileName" is added to the end of the command, the ouput of the command is appended to the specified filename, rather than writing over any exissdting data. The >> symbol is  known as the append redirection operator. For  example, we want to added contents of files at the nd of file1, 
+		$cat file1
+ 		$cat File2
+		to apped File2 contents into file1:
+		$cat file2 >> file1
+Creating a text file with redirection operation using keyboard(stdin):-
+---------------------------------------------------------------------
+Used alone, the cat command uses whatever you type at the keyboard as input, you can redirect this input to a file. Enter Ctrl D on a new line to signal the end of the text.
+At the system prompt, type
+  $cat > test.txt
+    enter the text ......
+    .....................
+    Ctrl d
+   Now the content is stored in test.txt ( a new file will be created with name test.txt)
+
+Redirecting Standard Error:-
+---------------------------
+To redirect staandard error output, type the file descriptor number 2 before the output or append redirection operator (> or >> ) and filename after the symbol.
+For example, the following command tries to list a file that does not existing system.
+	$ls -l dailytasks.sh
+	ls: 0653-341 The file dailytasks.sh does not exist.
+        $ls -l dailytasks.sh > a.out
+	ls: 0653-341 The file dailytasks.sh does not exist.
+ If you look at contents of a.out, it is empty, which means the error is printed on the screen and did not redirected to a.out file.
+Use below command to redirect the error:
+	$ ls -l dailytasks.sh 2> a.out
+Now no messagge is sent to the screen, but redirected to a.out. Verify by checking its contents with 'cat a.out' command       
+Below provides a list of redirection symbols and their meanings:
+Symbol		Meaning
+-----------------------------------------------------------------
+<		Redirects input
+> 		Redirects output
+>> 		Appends the output
+<<		Inline input
+2>		Redirect standard error
+1>&2		Redirect standard output to standard error
+2>&1		Redirecdt stndard error to stanadard output
+
+You can redirect stdin, stdout, stderr individually or group. For ex:
+	$ ls *.dat *.txt > file.out 2>files.err
+You may find some cases where you just want to keep all the output (stdout, stderr) inone single file. You can do this by using the following notation:
+		Command > OutputFile 2>&1
+	ex:-
+		ls -l *.dat *.txt > files.out 2>&1
+	
+
+
+

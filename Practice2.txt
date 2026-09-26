@@ -1,0 +1,47 @@
+1. create a logical volume
+2. create a striped logical volume.
+3. split a volume group
+4. remove a disk from volume group
+5. move all exntents from one pv to another
+6. create a mirrored logical volume
+7. create a mirror to an existing linear lv
+8. remove last pv from the vg
+9. fix insufficient extent issue for a logical volume.
+10. what is a filesystem structure
+11. what is a super block
+12. what is an inode? What is its importance?
+13. how will you print the inode information?
+14. how will you change number of inodes of a filesystem
+15. how will you print inodes of a filesystem
+16. what will happen if you run mkfs command on a block device(or an lv)
+17. What are the datablock in filesystem structure, and what is its size
+18. What is ls -l command will do ?
+19. what is chattr command will do ?
+20. Differences between ext2, ext3, ext4 and xfs filesystems?
+21. What is swap space? how will you create, activate, deactive, entry in /etc/fstab.
+22. What is format of the entry in /etc/fstab?
+23. What is a journal in filesystem?
+24. How will you increase/decrease a filesystem?
+25. How will you increase and decrease xfs filesystem?
+26. What is lazy unmount ?
+27. How will you unmount a filesystem that is giving resource is busy?
+28. What is the use of fuser and lsof commands?
+29. How will make sure that the filesystem will not undergo fsck when you do the reboot(maximum mounts, max interval)
+30. How will you know what type of FS is created on the LV or How do you know if there is a filesystem created on an LV?
+31. What do mean by last two field 0 0 in /etc/fstab file?
+32. How will run fsck on a) ext based filesystem b) on xfs filesystem
+33. how will you run fsck so that changes will not occur in the filesystem?
+34. What the different phases of fsck(or e2fsck)?
+35. How will you label a filesystem? (ext based as well as xfs )
+36. How will you create a filesystem using RAM space ?
+37. How do you know the lvm version that you are using?
+38. how will you back-up vg(vgcfgbackup) and and how will you restore(vgcfgrestore)? and what are teh default location of these backups?
+39. How will you mount DVD or ISO image?
+40. How will you scan for a disk that is been mapped by Storage team. How will you delete the disk from OS point of view.
+41. The df -h and du -sh commands shows different output.Why?
+42. What are the hex code for partitions a) LVM linux b) SWAP
+43. What do you mean by pseudo filesystem? Give some examples of some pseudo filesystems you know in the Linux Operatiing system?
+
+
+
+

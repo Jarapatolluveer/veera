@@ -1,0 +1,31 @@
+Backup strategies:-
+Before implementing your backup strategy, you have to choose the best one for your environment. As all of the strategies have their advantages, you have to match them with your requirements, based on how much new data you generate, the number of media sets you want to use, and the backup and restore window you rely on.
+There are three types of backup methods:
+ Full backup
+ Differential backup
+ Incremental backup
+Full backup
+All the files are put on media during a full backup.
+The advantages are:
+ Restoring from a full backup lowers the tape handling activities compared to an incremental or differential backup.
+ The content on the media is from within the same backup window (rollback and redundancy).
+The disadvantages are:
+ The backup window is wide.
+ If the data does not change, every full backup media set contains the same data.
+Differential backup
+The differential backup strategy first looks for the modification time of a file and compares it with the last full backup time. In other words, only modified files are backed up, but only if they changed after the latest full backup. Differential backups are cumulative; once a file has been modified, it will be included in every
+differential backup until the next full backup.
+The advantages are:
+ To restore, the latest full backup and only the latest differential backup media sets are needed.
+ The backup window is smaller than a full backup.
+The disadvantages are:
+ If data changes a lot between full backups, the data to back up tends to grow a bit over time, using more media.
+Incremental backup
+Incremental backups are similar to differential backups in that both back up only modified files. However, incremental backup checks the difference between the modification time of a file and the last backup time (either being full or incremental backup). If the modification date is more recent than the last backup date, the file is backed up.
+The advantages are:
+ The backup window is smaller than a full backup.
+ Only the differences from a previous backup will be written on media.
+The disadvantages are:
+ To restore, the latest full backup and all the subsequent incremental backup media sets following that full backup are needed.
+ To restore a single file, tape handling operations are intensive.
+ A damaged or lost media in the incremental set can mean disaster: The modifications of those files on that media may be lost forever.

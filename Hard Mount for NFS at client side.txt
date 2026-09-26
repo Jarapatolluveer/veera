@@ -1,0 +1,16 @@
+Hard Mount for NFS at client side:-
+-------------------------------------------
+hard mount:- When you mount nfs share using hard mount option(by default it is hard mount), nfs tries to access a hard-mounted directory, it keeps trying until it succeeds or someone interrupts its attempts. 
+If the NFS server goes down, any proceses using the moutnted directory hang until the server comes back and then continue processing without errors. Interruptable hard mounts may be interrupted with ctr-C
+Soft Mount:-
+------------
+Specify this option if the server is unreliable and you want to prevent systems from hanging when the server is down. When NFS tries to access a soft-mounted directory, it gives up and returns an error message after trying retrans times (retrans is an opton where you set, how many times the NFS client tries for the NFS server)
+intr:-
+------
+if intr option is enabled in /etc/fstab for nfs mount,  users may press ctr-C to interrupt an NFS mount that is haging indefinitely because of NFS server down. intr is default option.
+nointr:-
+if nointr option is enabled in /etc/fstab for nfs mount, the NFS client will not respond to ctrl-C to interrupt the nfs mount. 
+Below is sample entry:
+mytrainer.student.in:/sap       /newsap         nfs     defaults,hard,nointr,bg    0 0
+
+Note:- The intr / nointr mount option is deprecated after kernel 2.6.25. 

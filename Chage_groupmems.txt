@@ -1,0 +1,275 @@
+ groupmems command:-
+syntax:-
+i)
+ groupmems -l -g GroupName
+	where -l : list members in group
+              -g : groupname
+ii)
+ Add a user to a group
+ groupmems -a username -g groupname
+ex:-
+ groupmems -a spartons -g consultant1
+       where -a: Add user
+ The above command will add spartons user to group called consultant1
+ or
+ the below command will do the same as above.
+ usermod -aG consultant1 spartons
+
+iii)
+ Delete a user from a group
+ groupmems -d username -g groupname
+  where -d : Delete a user
+ex:-
+ groupmems -d spartons -g consultant1
+       where -d: Delete user
+ The above command will delete spartons user from the group called consultant1
+
+Note:- You can user usermod -aG command to add user to suppliment group. 
+       You can also user groupmems command to add a user to a suppliment group.
+Examples:-
+[root@trainer-blr01 ~]# groupmems -l -g consultant1
+operator1  database1
+]# groupmems -a spartons -g consultant1
+[root@trainer-blr01 ~]# groupmems -l -g consultant1
+operator1  database1  spartons
+[root@trainer-blr01 ~]# id spartons
+uid=44781(spartons) gid=44781(spartons) groups=44781(spartons),20046(consultant1)
+[root@trainer-blr01 ~]# groupmems -d database1  -g consultant1
+[root@trainer-blr01 ~]# groupmems -l -g consultant1
+operator1  spartons
+[root@trainer-blr01 ~]# id database1
+uid=20043(database1) gid=20049(database1) groups=20049(database1)
+[root@trainer-blr01 ~]# id operator1
+uid=20042(operator1) gid=20048(operator1) groups=20048(operator1),20046(consultant1)
+[root@trainer-blr01 ~]#  groupmems -a database1 -g consultant1
+[root@trainer-blr01 ~]# id database1
+uid=20043(database1) gid=20049(database1) groups=20049(database1),20046(consultant1)
+groupmod command:-
+-----------------
+groupmod command used to modify the group attributes.
+Syntax:- 
+  groupmod [options] groupName
+           -g : gid
+           -n : new name
+  examples:-
+  To change group id (non negative number)
+  groupmod -g 1234 conultant1
+  To change group name
+  groupmod -n NewGrpName OldGrpName
+Examples:
+[root@trainer-blr01 ~]# grep consultant1 /etc/group
+consultant1:x:20046:operator1,spartons,database1
+[root@trainer-blr01 ~]# grep consultant1 /etc/passwd
+[root@trainer-blr01 ~]# groupmod -g 12341 consultant1
+[root@trainer-blr01 ~]# grep consultant1 /etc/group
+consultant1:x:12341:operator1,spartons,database1
+[root@trainer-blr01 ~]# groupmod -n mercer consultant1
+[root@trainer-blr01 ~]#  grep consultant1 /etc/group
+[root@trainer-blr01 ~]# grep mercer /etc/group
+mercer:x:12341:operator1,spartons,database1
+[root@trainer-blr01 ~]# id spartons
+uid=44781(spartons) gid=44781(spartons) groups=44781(spartons),12341(mercer)
+[root@trainer-blr01 ~]#
+Groupdel command:-
+----------------
+groupdel groupname
+Note: You can not delete the primary group, and primary group automatically removed upon user deletion.
+[root@trainer-blr01 ~]# groupmems -l -g mercer
+operator1  spartons  database1
+[root@trainer-blr01 ~]# id operator1
+uid=20042(operator1) gid=20048(operator1) groups=20048(operator1),12341(mercer)
+[root@trainer-blr01 ~]# id spartons
+uid=44781(spartons) gid=44781(spartons) groups=44781(spartons),12341(mercer)
+[root@trainer-blr01 ~]# id database1
+uid=20043(database1) gid=20049(database1) groups=20049(database1),12341(mercer)
+[root@trainer-blr01 ~]# groupdel mercer
+[root@trainer-blr01 ~]# id operator1
+uid=20042(operator1) gid=20048(operator1) groups=20048(operator1)
+[root@trainer-blr01 ~]# id spartons
+uid=44781(spartons) gid=44781(spartons) groups=44781(spartons)
+[root@trainer-blr01 ~]#id database1
+uid=20043(database1) gid=20049(database1) groups=20049(database1)
+[root@trainer-blr01 ~]# grep mercer /etc/group
+[root@trainer-blr01 ~]# echo $?
+1
+[root@trainer-blr01 ~]#
+
+To change login name:-
+Syntax:- usermod -l NewloginName oldLoginName
+Ex:-
+usermod -l webmgr webadm
+The login name will be altered to webmgr. However, home directory is not changed. Use -m -d flags to create new home directory and move all the contents from old home directory to new home directory.
+Example:- usermod -m -d /home/webmgr webmgr
+Note:- The old home directory will be removed.
+lslogins command:-
+lslogins - display information about known users in the system
+
+Creating bulk users using newusers command:-
+syntax:-
+   newusers [options] fileName
+   ex:-
+   newusers u.txt
+   u.txt is a file that contains users. format is given below:
+   uname:password:uid:gid:gecos:homedir:shell
+[root@trainer-blr01 ~]# cat u.txt
+bigb01:test123:5566:5566:bigboss user1:/home/bigb01:/bin/bash
+bigb02:test123:5567:5567:bigboss user2:/home/bigb02:/bin/bash
+bigb03:test123:5568:5568:bigboss user3:/home/bigb03:/bin/bash
+bigb04:test123:5569:5569:bigboss user4:/home/bigb04:/bin/bash
+bigb05:test123:5570:5570:bigboss user5:/home/bigb05:/bin/bash
+bigb06:test123:5571:5571:bigboss user6:/home/bigb06:/bin/bash
+
+Epoch Time:-
+The time elapsed since 00 hours 1st Jan 1970 is known as epoch time.
+ex:- 
+date -d "06/15/2022 +1day"
+date -d "01/01/1970 +20000day"
+Fri Oct  4 00:00:00 IST 2024
+
+Password Aging Policies:-
+------------------------
+user's passwords are kept in /etc/shadow file. The format is as below:
+bigb06:$6$CQQvp23T.$nbxzzbw3y65if5eO.rWDf3PJZ9KrkQ8YiAzikO3oTQnGBl.AOysAJ4FNgKmWnwrJSN8MhKd8SxzsyH22gyfU8.:19158:0:99999:7:::
+Username:EncryptedPassword:PasswordLastChange:PasswordMinAge:MaxAge:WarningDays:Inactive:Expire:Blank
+ 1      :       2         :  3               :   4          :  5   : 6         :  7     :  8   : 9
+
+1st Field: User Name
+2nd Field: Encrypted password of the user. If the encrypted password is starting with ! symbol, then the user is locked.
+3rd Field: Last Change: The Date when the password been changed. This is shown in epoch days(days elapsed since Jan 1st 1970)
+4th Field: Minimum Age of the password in Days. Minimum days before the password may be changed. 0 means, the min age is disabled. ie No min Age requirement.
+5th Field: Maximum age of the password in Days. ie Maximum days before the password must be changed.
+6th Field: Warning Period in days before the password expires.
+7th Field: Inactive period in days. The number days the account will remain active after its expiry. You must change the password upon login during this time.
+8th Field: Account Expiry Date. On this date the accout will expire.
+9th Field: Left blank for future use if any.
+
+chage command:- Use chage command to change password aging policies.
+Syntax:-
+  chage [Options] username
+        -l : list password aging policies
+        -d : Password last change date. if the value is 0, then password must be changed.
+	-m : Min days between password changes (Min Age)
+        -M : Max days you can keep the password. After max days, the password will expire
+ 
+Examples:
+ chage -l bigb06
+ chage -d 0 bigb06 
+ the above will enforce the user to change the password as soon as you attempt to login.
+ chage -m 10 bigb06
+ bigb06 user must wait for 6 days between password changes
+ grep bigb06 /etc/shadow
+ chage -d 0 bigb06
+ grep bigb06 /etc/shadow
+ chage -l bigb06 : List password aging policies
+ chage -m 10 bigb06 : set min age of the password as 10 days
+ chage -l bigb06 : verify if minage is set. you can also observer the same /etc/shadow file
+ chage -M 42 bigb06 : Set Max as 42 days (6 weeks)
+ chage -l bigb06  :Verify if max is set
+ grep bigb06 /etc/shadow :Observer the same in /etc/shadow
+ date : Verify system date
+ chage -W 10 bigb06 : Change password warning days as 10 days (before max age is reached)
+ grep bigb06 /etc/shadow :Verify warning days by looking into /etc/shadow
+ date  : Check the currently system time. Change the system date and see warning days working
+ date 071813102022 : Change system date to July 18 1:10 pm 2022 year
+ date 072813102022  
+ chage -I 10 bigb06 : Change Inactive days (grace period in days to change the password after max is reached)
+ chage -l bigb06 : 
+ date 080713102022 
+ chage -l bigb06 
+ date 072513102022
+ chage -l bigb06 chage -l bigb06
+ chage -E 2022-07-20  bigb06 : Set Account expiry to 20th Juyly 2022
+ chage -l bigb06
+Note:
+You can also use usermod command to change expiry and inactive days:
+ usermod -e,   set account expiration date to EXPIRE_DATE
+ usermod -f,        set password inactive after expiration
+
+Setting password for bulk of user with single command:-
+Create any text file in the below format. Example:
+[root@trainer-blr01 ~]# cat p.txt
+bigb01:abc@123
+bigb02:abc@123
+bigb03:abc@123
+bigb04:abc@123
+bigb05:abc@123
+bigb06:abc@123
+Use chpasswd command to set passwords for bulk of users
+Example:-
+[root@trainer-blr01 ~]# cat p.txt|chpasswd
+
+Changing user's shell:-
+Command:- chsh [options] username
+          chsh -l : will print list of shell available
+          chsh username: attempts to changee given user's shell
+          chsh : attempts to change currrently logged in user's shell
+if you are a regular userr, you neeed to provide your password to change the shell.
+root user can chage shell for any other regular user without need of any authentication.
+Examples:
+[root@trainer-blr01 ~]# chsh bigb02
+Changing shell for bigb02.
+New shell [/bin/bash]
+/usr/bin/ksh
+Shell changed.
+[root@trainer-blr01 ~]# grep bigb02 /etc/passwd
+bigb02:x:5567:5567:bigboss user2:/home/bigb02:/usr/bin/ksh
+who command:- prints currently logged in users.
+syntax:-
+who -b : System boot time
+who -u : currently loggin users
+who -u -H 
+   where -H header.
+who command reads /run/utmp file. This file keep tracks of currently logged in users.
+who /path/to/utmpLikeFile.
+who commannd reads the data from the given file. if no filename given, it reads the data from /run/utmp.
+last command:-
+last command show a listing of last logged in users.
+syntax:- last
+	 last | more
+         last command read /var/log/wtmp file and print the data
+         last -f /path/to/wtmpLikeFile
+		-f : filename
+mv /var/log/wtmp /var/log/wtmp.old
+[root@trainer-blr01 ~]# last
+last: cannot open /var/log/wtmp: No such file or directory
+[root@trainer-blr01 ~]#last -f /var/log/wtmp.old
+The above command works because I renamed wtmp to wtmp.old.
+To know last reboots:
+last | grep reboot
+One should be careful in executing the above command. If grep is missing, effectively, the command will reboot the system.
+I have seen such scenario in offices, and remember there is a zero tolerance for humar error. You may loose you job!!!
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

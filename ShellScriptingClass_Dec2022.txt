@@ -1,0 +1,609 @@
+Defining variable in bash shell:
+-------------------------------
+Syntax: 
+ 	variable=Value
+    ex:-
+        x=10
+To print the content of the variable:
+-------------------------------------
+The value of variable can be obtatained $Variable. Example $x.
+To see the content of the variable 
+	$echo $x
+To unset the value of variable:
+------------------------------
+Syntax:- 
+	unset VariableName
+	ex:- unset x
+Now try to see its contents, you see its null. Ex: echo $x
+
+1.These variable are exists till you logout/exit from the shell. Hence these are call local variables.
+2.Use ; (semi colon) to execute multiple statements in a single line. Semi colon symbol is statement separator.
+example: $x=10;y=20
+
+Readonly statement:-
+-------------------
+You can define a variable as readonly. Use 'readonly' keyword for the same. Syntax is as below:
+$readonly x=10
+You can not change the value of variable once you define it as 'readonly'
+[root@sanjeevi ~]# readonly z=20
+[root@sanjeevi ~]# echo $z
+20
+[root@sanjeevi ~]# z=50
+-bash: z: readonly variable
+set command:-
+-------------
+used to print shell local variable.
+Syntax:- $set
+env command:-
+-------------
+used to rpint shell global variable(variables that can be accessed from any shell  and they are not local to only one shell). 
+Command: $env
+Command sustitution:-
+-------------------
+Use back quotes (`) or $(command) for command substitution.
+Example:-
+[root@sanjeevi ~]# uname
+Linux
+[root@sanjeevi ~]# echo "I am using uname"
+I am using uname
+[root@sanjeevi ~]# echo "I am using `uname`"
+I am using Linux
+[root@sanjeevi ~]# echo "I am using $(uname)"
+I am using Linux
+Note:-
+The variable name can be single character or can be a workd. Do no user reseve words or special characters in variable names.
+[root@sanjeevi ~]# d=wed
+[root@sanjeevi ~]# echo $d
+wed
+[root@sanjeevi ~]# day=wed
+[root@sanjeevi ~]# echo $day
+wed
+[root@sanjeevi ~]# day=wedness
+[root@sanjeevi ~]# echo "Today is first $day day"
+Today is first wedness day
+[root@sanjeevi ~]#
+[root@sanjeevi ~]# echo "Today is first $dayday"
+Today is first
+In the above, "$dayday" is treated as single variable, as it is not defined, hence a blank is printed. To separate $day as separate variable use the statement as below:
+[root@sanjeevi ~]# echo "Today is first ${day}day"
+Today is first wednessday
+[root@sanjeevi ~]# name=bangalore
+[root@sanjeevi ~]# echo "There is a new dictionery word called ${name}d"
+There is a new dictionery word called bangalored
+Shell metacharacters:-
+---------------------
+Metacharacters in shell got differennt meaning for the shell.
+',`,",;,,,//\,[,],{,},-.|,?,*,(,),$,#,%,!,@,~,
+
+Quoting Metacharacters:-
+------------------------
+1: ' ' : Single Quotes ignores all metacharacters that appear withing quotes.
+[root@sanjeevi ~]# City=Bangalore
+[root@sanjeevi ~]# echo 'The variable City can be printed using $City and its value is' $City
+The variable City can be printed using $City and its value is Bangalore
+2: " ": Double Quotes ignores all metacharacters (except that is preceded with escape sequece character \)
+Example: 
+ echo "The value of \$x is $x"
+The value of $x is 10
+echo The value of \$x is $x
+The value of $x is 10
+3: Escape Character \:
+Ignores the special meaning of the following character
+echo The value of \$x is $x
+4: ; (semi colon)
+used for command grouping. i.e. multiple commands can be entered in the same line that are separatedby ; symbol.
+Ex:- x=10;y=20;name=linux
+Whild cardds: - 
+Used for pattern matching.
+!,*,?,[,],[ - ]
+Read statement:- 
+Used to read the data from keyboard
+[root@sanjeevi ~]# read x
+100
+[root@sanjeevi ~]# echo $x
+100
+[root@sanjeevi ~]# read -p "Enter the value of x:" x
+Enter the value of x:500
+[root@sanjeevi ~]# echo $x
+500
+User read statement to supress the echoing the input:
+[root@sanjeevi ~]# read -s  x
+[root@sanjeevi ~]# echo $x
+700
+Shell scripting:-
+Is a method of providing shell statements in a file, and calling the file as if it is a command, so that all the satatments defined in the shell script(or program) are executed(interpreted by shell) one by one.
+Exit status:-
+------------
+Exist status obtained by $? which tells that the previous command is success or failure. The success will return 0 and failure will regurn non-zero.
+Example:-
+useradd test
+echo $?
+if the above prints 0, then the user created successfully. Any value other than zero ie non zero (usually 1- 127) means, the it is unsuccess.
+[labadmin@sanjeevi ~]$ useradd test
+useradd: Permission denied.
+useradd: cannot lock /etc/passwd; try again later.
+[labadmin@sanjeevi ~]$ echo $?
+1
+[labadmin@sanjeevi ~]$ mkdir /test123
+mkdir: cannot create directory ‘/test123’: Permission denied
+[labadmin@sanjeevi ~]$ echo $?
+1
+[labadmin@sanjeevi ~]$ mkdir test
+[labadmin@sanjeevi ~]$ echo $?
+0
+Logical Operators in bash shell:-
+Logical AND: &&
+Logical OR: ||
+Logical NOT: !
+
+ AND
+ T  AND T = T
+ T  AND F = F
+ F  AND T = F
+ F  AND F = F
+if both statements are true, then the condidtion will be true
+
+
+OR
+T T T
+T F T
+F T T
+F F F
+If both statements are false, then the result is false, else its is true
+
+!F = T
+!T = F
+
+variable:- A variable is name which can hold a value.
+ex:- x=10
+Print the content of variable using echo command:-
+    echo $VaribableName
+Place $ symbol before the variable to obtain  its value.
+    or
+    echo ${VariableName}
+
+reaonly variableName
+The  variable will come read only, so that you can not modify the same
+# echo $name
+1234
+# name=xyz
+ksh: name: This variable is read only.
+#
+
+resetting the varible using unset command:-
+# y=20
+# echo $y
+20
+# unset y
+# echo $y
+
+#
+# y=20
+# echo $y
+20
+# z=$y
+# echo $z
+20
+# z="Value of y is $y"
+# echo $z
+Value of y is 20
+# z='Value of y is $y'
+# echo $z
+Value of y is $y
+
+Command Subsitution and aissignment:-
+------------------------------------
+# a=$(whoami)
+# echo $a
+root
+#
+
+# t=date
+# echo $t
+date
+# t=$(date)
+# echo  $t
+Mon Feb 19 12:14:54 CST 2018
+#
+
+
+Note;- you can user back quotes (`) for command substitution.
+ex:-# vgs
+rootvg
+testvg
+aixvg
+datavg
+# l=$(vgs)
+# echo $l
+rootvg testvg aixvg datavg
+
+# ls=`vgs`
+# echo $ls
+rootvg testvg aixvg datavg
+#
+
+Exit Status:-
+-----------
+Tells if the previous commane is sucess or not. Exit status is printed with echo $?. If exit status is 0, the the previous comnand is success, a non-zero value represent failue.
+Example:-
+
+# whoami
+root
+# echo $?
+0
+# whoi
+ksh: whoi:  not found.
+# echo $?
+127
+$ whoami
+manju
+$ touch xyz
+$ echo $?
+0
+$ touch /xyz
+touch: 0652-046 Cannot create /xyz.
+$ echo $?
+1
+$
+
+null device:-
+------------
+special devie file under /dev directory, when output is redirected to this device, the redirected output will be discarded
+
+# lsvg -l datavg dvg aixvg 2>/dev/null
+#lsvg -l datavg dvg aixvg >/dev/null
+Arithmetic Operations in the shell:-
+----------------------------------
+# x=10
+# y=20
+# z=$x+$y
+# echo $z
+10+20
+# x=hi
+# y=there
+# z=$x+$y
+# echo $z
+hi+there
+# x=10
+# y=20
+# z=`expr $x + $y`  #Addition
+# echo $z
+30
+# z=`expr $x - $y`  ##Subtraction
+# echo $z
+-10
+# z=`expr $x \* $y`  #Multiplication
+# echo $z
+200
+# z=`expr $x / $y`  #Integer Division - Quotient Value
+# echo $z
+0
+# z=`expr $x % $y`  #Modulus - Remaider obtained after integer division.
+# echo $z
+10
+
+Note:- You can also use perenthesis instead of back quotes as below example
+# echo $x $y
+10 20
+# z=$(expr $x + $y )
+# echo $z
+30
+#
+
+Arithmetic opeatios:-
+test command is used to test the comparision, which will return success or failure
+# echo $x $y
+10 20
+# test $x -gt $y # -gt: greater than
+# echo $?
+1
+# test $x -lt $y  # -lt : Less than
+# echo $?
+0
+# test $x -le $y  # -le : less than or equal
+# echo $?
+0
+# test $x -ge $y  # -ge : Greater than or equal
+# echo $?
+1
+# test $x -ne $y  # -ne : Not equal
+# echo $?
+0
+# test $x -eq $y  # -eq : Equals to
+# echo $?
+1
+
+You can alo use [] insted of test keyword.
+# echo $x $y
+10 20
+# [ $x -eq $y ]  ##This statement is same as test $x -eq $y
+# echo $?
+1
+#
+
+File Tests:-
+-s fileName : True if the file exists and  has its size greater than zero bytes
+-f filename : True if the file exists (can be any file type)
+-d filename : True if the given file exits and is of type directory
+-c Filename : True if the file exits and is of type character type device file
+-b filename : True if the file exits and is of type block type device file
+-r filename : Ture if the user is having read permission
+-w filename : true if the luser is having write permission
+-x filename : true if the luser is having execute permission
+-k filename : true if the file exits and is having sticky bit enabled.
+Examples:-
+$ [ -f y.out ]
+$ echo $?
+1
+$ touch y.out
+$ [ -f y.out ]
+$ echo $?
+0
+$ ls -l y.out
+-rw-r--r--    1 manju    staff             0 Feb 19 12:52 y.out
+$ [ -s y.out ]
+$ echo $?
+1
+Now add some data to y.out and do the test.
+$ [ -s y.out ]
+$ echo $?
+0
+# test -f /etc/passwd123
+# echo $?
+1
+# test -d /etc/passwd
+# echo $?
+1
+# test -d /etc
+# echo $?
+0
+# su - manju
+$ test -r /etc/passwd
+$ test -r /etc/passwd
+$ echo $?
+0
+$ test -w /etc/passwd
+$ echo $?
+1
+$ test -x /etc/passwd
+$ echo $?
+1
+$ ls -ld /tmp
+drwxrwxrwt   10 bin      bin            4096 Feb 19 12:50 /tmp
+$ test -k /tmp
+$ echo $?
+0
+
+String Comparisons:-
+------------------
+str1=str2 : true if both are same
+str1!=str2 : true if both are not same
+-n Str1 : true if the string not zero length
+-z str2 : true if the string is of length zero.
+str1  : true if the string is not null
+Examples:-
+color="red"
+# [ "$color" = "Red" ]
+# echo $?
+1
+# [ "$color" = "red" ]
+# echo $?
+0
+# [ -z $xyz ]
+ksh: test: 0403-004 Specify a parameter with this command.
+# [ -z $color ]
+# echo $?
+1
+# [ -z $color ]
+# color=
+# echo $color
+
+# [ -z $color ]
+ksh: test: 0403-004 Specify a parameter with this command.
+# color=yellow
+# [ -n $color ]
+# echo $?
+0
+# color=""
+# [ -n $color ]
+ksh: test: 0403-004 Specify a parameter with this command.
+# echo $xyz
+
+# [ $xyz ]
+# echo $?
+1
+# xyz=123
+# echo $xyz
+123
+# [ $xyz ]
+# echo $?
+0
+# echo $xyz
+123
+# unset xyz
+# echo $xyz
+
+# [ $xyz ]
+# echo $xyz
+
+# [ $xyz ]
+# echo $?:w
+1
+
+Logical Operators:-
+------------------
+And
+Or
+Not
+
+Operators		Meaning
+------------		------------------
+
+!			Not
+-a 			And
+-o			OR
+
+Examples:-
+
+# x=10;y=20
+# [ $x -gt $y ]
+# echo $?
+1
+# [ $x -gt $y ] -o [ $x -ne  $y ]
+# echo $?
+1
+# [ $x -gt $y  -o  $x -ne  $y ]
+# echo $?
+0
+# [ $x -gt $y  -a  $x -ne  $y ]
+# echo $?
+1
+# [ $x -gt $y ]
+# echo $?
+1
+# [ ! $x -gt $y ]
+# echo $?
+0
+#
+
+Conditional Statements:-
+------------------------
+1)if condition:
+
+if test condition
+then
+    statement1
+    statement2
+    :
+    :
+fi
+
+read statement:-
+---------------
+Syntax:- read var1 [var2, var3 ... ]
+read statement is used to read input from keyboard.
+
+2) if test_condition
+   then
+        st1;
+        st2;
+        :
+        :
+   else	
+        st3
+        st4
+        :
+        :
+   fi
+
+    
+3) if ..then..elif... fi
+  
+if test_condition
+   then
+        st1;
+        st2;
+        :
+        :
+   elif test_condition
+    then
+    	st3
+        st4
+        :
+        :
+   fi
+
+Positional Parameters:-
+----------------------
+Represent position of arguments
+Can be passed via command line as command line arguments
+examples:-
+# set monday tuesday wednesday thursday
+# echo $1
+monday
+# echo $2
+tuesday
+# echo $3
+wednesday
+# echo $4
+thursday
+# echo $*
+monday tuesday wednesday thursday
+# echo $@
+monday tuesday wednesday thursday
+# echo $#
+4
+# echo $0
+-ksh
+# set one two three four five six seven eight nine ten eleven twelve thirteen
+# echo $#
+13
+# echo $0
+-ksh
+# echo $1
+one
+# echo $8
+eight
+# echo $9
+nine
+# echo $10
+one0
+# echo  ${10}
+ten
+# echo  ${12}
+twelve
+# shift 1
+# echo $1
+two
+
+Case Conditioinal statement:-
+---------------------------
+case value in 
+option1)
+        st1;
+	st2;
+	:
+	;;
+ption2)
+        st3;
+	st4;
+	:
+	;;
+:
+:
+*)
+        st;
+	st;
+	;;
+esac
+
+
+Loop Control structure:-
+-----------------------
+1.while loop:-
+
+while Test_Condition
+do
+    st1;
+    st2;
+    st3;
+    :
+    :
+done
+
+2.until loop:-
+until TestCondition
+do
+   st1
+   st2
+   :
+   :
+done
+
+3.for loop:-
+for variable in val1 val2 val3 ...
+do
+   st
+   st
+done
+

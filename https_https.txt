@@ -1,0 +1,178 @@
+Apache Webserver(http server):-
+-----------------------------
+used for URL loading via http protocol
+http: hyper text transfrer protocol
+Daemon: httpd
+Port Number: 80/tcp
+Configuration  file: /etc/httpd/conf/httpd.conf
+or
+/etc/httpd/conf.d/*.conf (any file name that ends with .conf)
+
+*)Systemctl command is used to start/stop/status/restart/reload. By default, html pages are kept under /var/www/html directory
+Configuring apache http server:-
+--------------------------------
+*) Apache httpd also called apache web server. Httpd implements fully configurable and extensible webserver with full http support.
+*)httpd functionality can be exented with modules.
+*)Modules are small pieces of code that plug into the main weserver framework, and extends its functionality
+
+Basic Apache httpd configuration:-
+----------------------------------
+*)The default configuration file is /etc/httpd/conf/httpd.conf
+*)The basic syntax of httpd.conf is comprized of two part:
+Key Values confiuration directives:
+-----------------------------------
+ *)html like <blockname parameter> with other configuraiton directives embedded in them.
+ *)Key/Value pairs outside of the block affect the entire server configuraiton, while directives inside a block typically only apply to a part of configuration indicated by the block.
+
+Below are the important configuraiton directive of /etc/httpd/conf/httpd.conf
+
+ServerRoot "/etc/httpd" (1)
+Listen 80 (2)
+Include conf.modules.d/*.conf (3)
+user apache (4)
+group apache (5)
+serverAdmin root@localhost (6)
+<Direcdtory / >  (7)
+  AllowOverride none
+  Require all denied
+</Directory>
+DocumentRoot "/var/www/html"  (8)
+ <Directory "/var/www">
+  Allow Override none
+  Require all granted
+ </Direcdtory>
+ <Directory "/var/www/html">
+  Options Indexes followsymlinks
+  Allowoverride none
+  Require all granted
+</Directory>
+<IfModule dir_module>   (9)
+  Direcdtory Index index.html
+</IfModule>
+<Files ".ht*">
+ Require all denied
+</files>
+Errorlog "logs/error_log"   (11)
+Loglevel warn
+Customlog "logs/access_log" combined  (12)
+AddDefaultsCharset UTF-8   (13)
+IncludeOptional conf.d/*.conf  (14)
+
+Explanation for poing number 1 to 14 as below:
+1. This directive specifies where httpd will look for any files reference.
+2. httpd to start listening on port number 80/tcp on all interfaces
+3. Includes other files, as if they were inserted into the configuraiton file in the place of the include statement.
+4&5. httpd daemon should run with given user and group ownership.
+6.Error pages that are generated can inlcude a link (email address) where user can report a problem.
+7. <Directory /> sets configuraiton directives for a specified directives and all descended directives. Below are common inside a "directory"
+	a) Allow override none: 
+	.htaccess files will not be consulted fora directory configuration settings
+	b) Required all denied
+	httpd will refuse to server content out of this directory.
+	c) Require all granted
+	Allow access to this directory.
+	d)Option [+/-] options
+	Turn on/off certain options for a directory
+Example: Indexes: This option will shwo a directory listing if a directory is requested and no index.html file exists in the directory.
+8.Determins where the httpd will search for requested files 
+9)This block only appleis its contents if the specifed module is located.
+  Example: Dir_module is loaded, so that DirectoryIndex directive can be used to specify what files should be used when direcotry requisted.
+10. A <file> block works just as a <Directory> block. But there are options for individual(wildcarded). Example, the block prevents security sensitive files like .htaccess and .htpasswd
+11. filename to store errors
+12. Filename to store customer logs
+13. sets the content type (text/plan/html etc., )
+14. Wrok same as regular include.
+
+Working notes to configure website to browse data using http webserver(apache):
+------------------------------------------------------------------------------
+Step1:
+yum install httpd* : Package to be installed if it not installed already. By defualt, configuration files is located at /etc/httpd/conf/httpd.conf
+Step2:
+vi /etc/httpd/conf/httpd.conf
+ ServerName repo.alclabs.in
+ DocumentRoot "/Repo"
+<Directory />
+ Optioins followsymlinks
+ Allowoverride non
+</Directory>
+<Directory /Repo>
+ Options +Indexes followsymlinks
+ Allowoverride non
+ Allow from all
+</Directory>
+Now save the file and test with httpd -t command to know if the syntax is Ok.
+Start the httpd service
+You might need to stop and start (or restart or reload) to make changes effect whenever you modify configuration file.
+
+Creating  multiple websites using singple ip address:-
+----------------------------------------------------
+*)Virtual hosts allow a single httpd server to serve clients for multiple domains. Virtual hosts are cost effective as multiple virtual servers to serve many low traffic websites in a shared hosting environment.
+*)Virtual hosts are configured using <VirtualHost> block inside the main configuraiton. As a best practice Virtual hosts are defineed in a separate .conf files under /etc/httpd/conf.d directory.
+*)The virtual host definition looks like below:
+ Listen 81
+<VirtualHost shouryarepo.alclabs.in:81>
+  ServerAdmin shourya@alclabs.in
+  DocumentRoot /repo
+  ServerName shouryarepo.alclabs.in
+  ErrorLog logs/shouryarepo.alclabs.in_error_log
+  CustomLog logs/shouryarepo.alclabs.in-access_log common
+<Directory /repo>
+Options Indexes FollowSymLinks
+AllowOverride None
+Order allow,deny
+Allow from all
+</Directory>
+</VirtualHost>
+
+1.<Directory /repo> : This block provides access to doucment root
+2.VirtualHost shouryarepo.alclabs.in:81>: This indicates to httpd daemon that this block should be considered for all incoming on that IP/Port combination
+3.DocumentRoot /repo :Defines document root only for this virtual host
+4.ServerName shouryarepo.alclabs.in : Defines the website name
+5.ServerAdmin shourya@alclabs.in : Defines Administrator email id
+6.ErrorLog logs/shouryarepo.alclabs.in_error_log: Defines log file for error messages
+7.CustomLog logs/shouryarepo.alclabs.in-access_log common :Defines location cutomer errlog log messages
+
+SSL Setup for a website:-
+-------------------------
+yum install mod_ssl -y
+*)Apache httpd provides TLS - Encrypted virtual hosts (TLS : Transport Layer Security)
+*)It is a method of encrypting network communication
+*)It is an advanced version of SSL (Secure Socket Layer)
+*)TLS is based on sSL certificates which consistes of multiple parts such as public key, server identity and signature from certificate Authority. Below are steps to setup https web:
+Step1. Generate RSA key
+Synatx:
+   openssl genrsa -out filename.key 1024 or 2048
+   Ex:- openssl genrsa -out jothi.key 2048
+Step2. Generate Certificated Signing Request (CSR)
+   openssl req -new -key filename.key -our filename.csr
+   Ex:- openssl req -new -key jothi.key -out jothi.cer
+Step3: Generate self Signed Certficate
+   openssl x509 -in filename.key  -out filename.csr -req filename.key -days 365
+   Ex:- openssl x509 -in jothi.cer -out jothi.crt -req -signkey jothi.key -days 365
+   Where x509 refers to x509 certificate data management.
+Configuring https:-
+TLS is transport layer security, and its preceditor SSL, which stands for Secure Socket Layer which helps web traffic to wrap in a protected, encrypted wapper. Assume that you are configure https://mjothi.alclabs.in using above created keys and certificate, and below is virtual host definition:
+vi /etc/httpd/conf.d/jothi_sec.conf
+<VirtualHost mjothi.alclabs.in:443>
+ SSLEngine on
+ DocumentRoot /jothi_sec
+ ServerAdmin jothi@alclabs.in
+ ServerName mjothi.alclabs.in
+ SSLCertificateKeyFile /etc/jothi.alclabs.in/sec_keys/jothi.key
+ SSLCertificateFile /etc/jothi.alclabs.in/sec_keys/jothi.crt
+</VirtualHost>
+<Directory  /jothi_sec>
+ Options Indexes FollowSymLinks
+ AllowOverride none
+ Allow from all
+ Order allow,deny
+</Directory>
+
+Restart the daemons and start browsing the website using https://mjothi.alclabs.in. Verify Certificate for more details.
+
+   
+
+
+
+
+           

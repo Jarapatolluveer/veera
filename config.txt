@@ -1,0 +1,4 @@
+HostName 192.168.3.79
+User root
+port 22
+Identityfile C:\Users\91630\Desktop\id_rsa.pem

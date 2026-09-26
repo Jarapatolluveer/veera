@@ -1,0 +1,98 @@
+SMB File sharing with Samba:-
+
+The samba service can share linux filesystems as SMB network file shares. The basic steps that must be performed in order to configure Samba to provide an SMB fileshare as a workgroup member are:
+1. Install the samba package
+2.Prepare permissions on the directory to be shared
+3.Configure /etc/samba/smb.conf
+4.Setup appropriate Linux server with NTLMv2 passwords.
+5.Start Samba and open local firewall (add samba service, port num 139)
+6.Verify that the Samba can be mounted from a client
+
+1.Install the Samba Package:
+	yum install samba
+   to install client package
+	yum install cifs-utils
+2. Prepare directories for sharing
+    create a directory which you what to share, the permissions which should be set on the directory will depend on who needs access to it and how it will be mounted by clients.
+    A client normally mounts a share by authenticating access to the SMB server as a particular user. All files in the share need to be readable (and possible writable) by the user that is used to mount the share.
+    If SELinux is in inforcing mode, the directory need to have correct SELinux contexts and certail SELinux booleans may need to set inorder have correct access. SELinux context samba_share_t gives Samba read and write access. You can use chcon -R -t samba_share_t /DirName
+3.Configure /etc/samba/smb.conf
+-->The main configuration file for Samba is /etc/samba/smb.conf. This file is divided into multiple sections. Each section starts with a section name in square barackets, folled by a list of parameters set to a particual values.
+-->/etc/samba/smb.conf start with a [global] setction used for general server configuration. Subsequent sections each define a file share or printer share provided by the Samba Server. Two special sections may exits [homes] and [printers], wich have special uses. Any line beginning with a semicolon(;) or a hash(#) character is commented out.
+-->The [global] section:-
+    This section defines the basic configuration of hte Samba server. Most windows systems default to WORKGROUP, although windows XP Home defaults to MSHOME. This is used to help systems browse for the server using the NetBIOS for TCP/IP name service.
+-->To setup workgroup to WORKGROUP, change the existing workgorup entry in the /etc/samba/smb.conf to:
+			WORKGROUP = WORKGROUP
+-->Security controls tells how clients are authenticated by Samba. For security = user, clients login with the valid username and password managed by the local Samba server. This setting is the defualt in /etc/samb/smb.conf
+-->hosts allow is the comma separated delimited list of hosts that are permitted to access the Samba service. If it is not specified, all hosts can access Samba. If it is not specified in [global] section, you can set on each share separately. If specified in the [global] section, it is applied to all the shared.
+-->Hosts can be specified by hostname or ip addresses. Host names are checked by resolving their names to ip  (via DNS or /etc/hosts). Allowed hosts can be specified number of ways as give below
+		i)ipv4 network/prefix (example: 192.168.1.0/24)
+                                  ii)ipv4 network/netmask (example: 192.168.1.0/255.255.255.0)
+	               iii)IPv4 Subnet Prepfix (example: 192.168. )
+                                  iv)hostname (example: server11.a-lc.in)
+                                  v)all hosts ending with a pattern (example .a-lc.in)
+	For example, to restrict access to only hosts from 192.168.1.0/24 network, using the trailing . notation, the hosts allow entry in /etc/samba/smb.conf will be
+		hosts allow = 192.168.1.
+		hosts allow = 192.168.1.   .a-lc.in
+File Share Sections:
+To create a file shsare, at the end of /etc/samba/smb.conf, place the share neame in bracket to start a new section for the share. some key directives should be in this sections:
+1. 'path' must be set to indicate which directory to share. For example, path=/myDir
+2. 'writable = yes' should be set if all authenticated users should have read-write access to the share. The default setting is  'writable = no'
+3. if 'writable = no' is set, a comma-separated  'write list' of users with read-write access to the sare can be provided. Users not on the list will have read only access. Members of local groups can also be specifed 'write list = @groupName' will permit all authenticated users who are part of given Linux Group will have write access.
+4.'valid users' if set, specifies a list of users allowed to access the sahre. Users not on the list are not allowed to access the share. However, if the list is blank, all users can access the share.
+Example:
+	[myshare]
+	  path=/myDir
+	  writeable = no
+          valid users = jradha, @sales
+5.You can validate to see if there are any erros in /etc/samba/smb.conf file using 'testparm' command.
+
+Preparing Samba users:
+1. The 'security = user' setting requires a Linux account with a Samba account that has a valid NTLM password. To create a Samab-only system user, keep the Linux password locked, and seet the login shell to /sbin/nologin. This prevents the login of the user directly, or with ssh on the system. For example, to create the locked Linux account for a user jradha:
+	useradd -s /sbin/nologin jradha
+The samba-client contains the 'smbpasswd' command. It can create Samba account and set passwords:
+	ex:- smbpasswd -a jradha
+
+Starting Samba:-
+user service command to start Samba service.
+	ex:-
+	      systemctl start smb
+	      systemctl start nmb
+Note:- you can set to start those automatically using systemctl enable smb and systemctl enable nmb commnads.
+The two services smbd and nmbd, must communicate through the local firewall. Samba's smbd daemon normally uses TCP/445 for SMB connections. It also lists on TCP/139 for NetBIOS over TCP backward compatibility The nmbd uses UDP/137 and UDP/138 to provide NetBIOS over TCP/IP network browsing support.
+
+
+Mounting Samba Share:-
+---------------------------------
+1. Identify share details. The administrator for the SMB server host can provide share details such as username and password for the share name etc., You can use 'smbclient' command for the same.
+	ex:- smbclient -L //ServerName 
+	     or
+	       smbclient -L //ServerName -U username
+2.mount point:- use mkdir command to create a mount point in a suitable location
+	       ex:- mkdir -p /mountPint
+3.mount:-
+  There are two ways to mount: Manually or incorporated in the /etc/fstab file.
+  ex:-
+    mount -t cifs -o username=usrname,password=passwd //ServerName:/sharename /MountPoint
+  The '-t cifs' option is the filesystem type for SMB shares and the -o username option tells the mount command to try and authenticate as given users account without a password.
+  Another way is to add entry in   /etc/fstab: example
+	//servername:/ShareName	/mountpoint 	cifs 	defaults,username=Userame,password=Paswd   0   0
+Mount the SMB share with a given user:
+	mount -t cifs -o username=jradha   //Server11/protected   /mylocal
+or
+                  mount -t cifs -o credentials=/etc/usrfile.txt  //Server11/protected /mylocal
+		where /etc/usrfile.txt consits of user and password as below format
+	                           username=jradha
+                                   password=jradha
+
+
+You can configure automount for samba shares, given example as below:
+a) entry from /etc/auto.master
+   /-      /etc/shares.txt
+b)contents of /etc/shares.txt
+/student -fstype=cifs,credentials=/etc/user.txt ://192.168.1.11/MSHARE
+c)Contents of /etc/user.txt
+username=master
+password=master
+
+restart autofs services and try to access /student, it mounts automatically :-)

@@ -1,0 +1,309 @@
+[root@skrishna shellscript]# cat program{1..21}.sh
+#!/bin/bash
+echo "enter the value of name"
+read name
+echo "you entered $name"
+#end
+#!/bin/bash
+read -s -p "Enter Your password:" pass
+echo -e "\nyour password is $pass"
+#end
+
+#!/bin/bash
+#script to create user and set password for the same
+read -p "enter the user name:" name
+read -sp "enter the password for user $name:" pass
+useradd $name
+echo "$name:$pass"|chpasswd
+echo -e"\nuser $name created.."
+#End of the script
+#!/bin/bash
+echo "print members of a group"
+read -p "Enter the group name:" gname
+echo "Below are members of $gname group:"
+groupmems -l -g $gname
+#End
+ #!/bin/bash
+#Script for arthmetic operations
+read -p "Enter the first number:" num1
+read -p "enter thwe second number:" num2
+z=$((num1+num2))
+echo "the addition is: $z"
+Z=$((num1-num2))
+echo "The subtraction is: $z"
+z=$((num1*num2))
+echo "The miultipication is: $z"
+z=$((num1%num2))
+echo "The division is :$z"
+z=$((num1/num2))
+echo "the division is :$z"
+#end of the script
+#!/bin/bash
+read -p "Enter the first number" num1
+read -p "Enter the second number" num2
+#Test if first number is big
+if test $num1 -gt $num2
+then
+   echo "Given number $num1 is the bigger than $num2"
+fi
+#Test if the first number is small
+if test $num1 -lt $num2
+then
+   echo "Given number $num2 is bigger than $num1"
+fi
+
+#Test for equal
+if test $num1 -eq $num2
+then
+   echo "Given number are equal to each other"
+fi
+
+#End
+
+#!/bin/bash
+read -p "Enter the first number": num1
+read -p "Enter the second number": num2
+#Test if first number is big
+if [[ $num1 -gt $num2 ]]
+then
+   echo "Given number $num1 is the bigger than $num2"
+fi
+#Test if the first number is small
+if [[ $num1 -lt $num2 ]]
+then
+   echo "Given number $num2 is bigger than $num1"
+fi
+
+#Test for equal
+if [[ $num1 -eq $num2 ]]
+then
+   echo "Given number are equal to each other"
+fi
+
+#End
+
+#!/bin/bash
+read -p "Enter the first number": num1
+read -p "Enter the second number": num2
+#Test if first number is big
+if ((num1<num2))
+then
+   echo "Given number $num1 is the bigger than $num2"
+fi
+#Test if the first number is small
+if (($num1==num2))
+then
+   echo "Given number $num2 is bigger than $num1"
+fi
+
+#Test for equal
+if ((num1>=num2))
+then
+   echo "Given number are equal to each other"
+fi
+
+#End
+
+#!/bin/bash
+read -p "Enter the first number": num1
+read -p "Enter the second number": num2
+#Test if first number is big
+if ((num1>num2))
+then
+   echo "Given number $num1 is the bigger than $num2"
+else
+     echo "$num1 is not bigger than $num2"
+fi
+
+#End
+
+#!/bin/bash
+#script to create user and set password for the same.
+read -p "Enter the user name:" name
+grep -w ^$name /etc/passwd>/dev/null
+if [[ $? -eq 0 ]]
+then
+    echo "user $name found in the system.could not create..Exiting"
+else
+   read -sp "Enter the password for user $name :" pass
+   useradd $name
+   echo "$name:$pass"|chpasswd
+   echo -e "\nuser $name created.."
+fi
+#if End here
+#End the script
+#!/bin/bash
+#script to create user and set password for the same.
+read -p "Enter the user name:" name
+if [[ -n $name ]]
+then
+grep -w ^$name /etc/passwd>/dev/null
+if [[ $? -eq 0 ]]
+then
+    echo "user $name found in the system.could not create..Exiting"
+else
+   read -sp "Enter the password for user $name :" pass
+   useradd $name
+   echo "$name:$pass"|chpasswd
+   echo -e "\nuser $name created.."
+fi
+#if End here
+else
+   echo "Invalid User Name..Try Again.."
+fi #outer if ends here
+#End the script
+#!/bin/bash
+read -p "Enter the first value:" num1
+read -p "Enter the second value:" num2
+read -p "Enter the third value:" num3
+if [ $num1 -lt $num2 -a  $num1 -lt $num3 ]
+then
+    echo $num1 is small
+elif [[ $num2 -lt $num1 ]] && [[ $num2 -lt $num3 ]]
+then
+ echo $num2 is small
+else
+ echo $num3 is small
+fi
+#!/bin/bash
+read -p "Enter the user name:" name
+grep -w ^$name /etc/passwd>/dev/null
+res=$?
+if [  -z $name ] || [ $res -eq 0 ]
+then
+    echo "user name is invalid.could not create..Exiting"
+else
+   read -sp "Enter the password for user $name :" pass
+   useradd $name
+   echo "$name:$pass"|chpasswd
+   echo -e "\nuser $name created.."
+fi
+#End the script
+#!/bin/bash
+#lock the given user.
+read -p "Enter the username to lock": user
+#check if  the user exists in the system. if Yes,then proceed to lock
+#using  nested if's. An if condition inside if.
+grep -w ^$user /etc/passwd>/dev/null 2>&1
+res=$?
+if [ $res -eq 0 ]
+then
+ echo "Locking the user $user"
+ usermod -L $user>/dev/null 2>&1
+ if [ $? -eq 0 ]
+then
+   echo "Locked sucessfully"
+else
+  echo "could not lock the user"
+fi #inner if closed
+else
+ echo "User $user not found in the system"
+fi #out if closed
+#!/bin/bash
+#check if the given user is locked ?
+read -p "Enter the user name:" user
+grep -w ^$user /etc/shadow >/dev/null 2>&1
+res=$?
+if [ $res -eq 0 ]
+then
+ echo "User found...checking if $user Locked.."
+ grep -w ^$user /etc/shadow |cut -f2 -d:|grep^! >/dev/null 2>&1
+ res=$?
+ if [ $res -eq 0 ]
+ then
+  echo "User is Locked"
+ else
+  echo "User $user is not Locked..."
+ fi #inner if
+else
+ echo "user $user not found"
+fi #out if
+#End of the program.
+#!/bin/bash
+#check if you are not a root user
+if [ `id -u` -eq 0 ]
+then
+ echo "you are root"
+else
+ echo "you are not root"
+fi
+#script to work unary operators
+#!/bin/bash
+echo "You are testing pre and post increment and decrement operations:"
+echo "Enter a number value of x:"
+read x #where x is a variable obtained its a value from keyboard
+echo "value after post increment of x by executing x++ is $((x++))"
+echo "value after pre increment of x by executing ++x is $((++x))"
+echo "valu after post decrement of x by ecxecuting x-- is $((x--))"
+echo "value after pre decrement of x by executing --x is $((--x))"
+#End of the script
+#!/bin/bash
+#perform string tests
+echo "Enter the text"
+read str
+if [ $str ]
+then
+ echo "string exists and is not null"
+fi
+
+if [ -n $str ]
+then
+ echo "string exits and is not zerolength"
+fi
+
+if [ -z $str ]
+then
+ echo "string exists and is zero length"
+fi
+
+echo "The given string is $str"
+echo "Now unset the variable"
+unset str
+echo "After unset,testing the string [ \$str ]"
+if [ $str ]
+then
+ echo "string exists and is not null"
+else
+ echo "Its is null string"
+fi
+
+#End
+#!/bin/bash
+#Demonstrate positional parameters
+echo "You have entered $# number of positional paarameters"
+echo "The program name is $0"
+echo "The positional parameter are $@"
+echo "The positional parameters are $*"
+echo "The firsrt parameter is $1"
+#End
+#!/bin/bash
+#Find the greatest a month of three numbers
+#obtain numbers from command line
+#
+if [ $# -ne 3 ]
+then
+ echo "Not received valid number of inputs from the program...reading the input now"
+ read -p "Enter the first number": num1
+ read -p "Enter the second number": num2
+ read -p "Enter the third number": num3
+else
+ num1=$1
+ num2=$2
+ num3=$3
+fi
+#find the biggest number among there
+if [ $num1 -gt $num2 ] #if true,then num1 is bigger than num2
+then
+  if [ $num2 -gt $num3 ] #compare now eith num3, if still num1 is bigger than num3then num1 is big
+  then
+   echo "$num1 is bigger"
+  fi
+elif [ $num2 -gt $num3 ] #if num1 is not bigger,then compared num2 and num3 to find bigger
+then
+  echo "$num2 is big"
+else
+ echo "$num3 is big"
+fi
+#End
+
+[root@skrishna shellscript]#

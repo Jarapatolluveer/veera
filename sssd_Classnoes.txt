@@ -1,0 +1,37 @@
+Join your linux server to AD domain (integrating linux box to AD, so that user authentication happens via AD)
+Step1: Install SSSD (System Security Services Daemon (SSSD)),T provides a set of daemons to manage access to remote directories and authentication mechanisms. Install its depndent packanges as well.
+
+yum install realmd oddjob oddjob-mkhomedir samba-common adcli sssd samba-common-tools krb5-workstation openldap-clients policycoreutils-python3 -y
+
+Step2: vi /etc/hosts
+put the below entry
+192.168.1.12	dc01.alclabs.in dc01
+nmcli con mod ens192 ipv4.dns 192.168.1.12 ipv4.dns-search alclabs.in
+ifdown ens192;ifup ens192
+Below is not required as this will be udpated by NetworkManager automatically. Go to Step 4
+------------------------------------
+Step3:vi /etc/resolv.conf
+put the below entry
+192.168.1.12	dc01.alclabs.in
+------------------------------------
+Step4: Discover AD server
+realm discover -v dc01.alclabs.in
+Step5: Join the linux server to domain
+realm join --user=administrator dc01.alclabs.in
+Step5. Verify if the server is joined
+realm list
+Verify with user(use user@domain name) if it works
+id student@alclabs.in
+Step6
+To ignore @doman name, and create home directory as /home/username edit /etc/sssd/sssd.conf file
+vi /etc/sssd/sssd.conf
+set below attribues with given vaues:
+use_fully_qualified_names = false
+fallback_homedir = /home/%u
+Step 7
+Restart the sssd daemon
+systemctl restart sssd
+Now verify the user without @domainName
+Example:
+id student
+Step8. Now try to login and check if all AD users are able to authenticate.

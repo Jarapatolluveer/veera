@@ -1,0 +1,33 @@
+yum repolist
+yum clean all
+yum list
+or
+yum list all : shows installed and available packages. Installed packages showin with @ symbol in the last column
+yum list installed : Only installed packages
+yum list available : Only available(not installed) packages
+yum lis packagename
+yum provides /path/toCommand
+example
+yum provides */yum-config-manager
+To install the package
+yum install PckgeName -y
+yum-config-manager --disable Rhel78 : To disable Repo ID
+yum-config-mangner --enable rhel78  : To enable Repo
+yum install pacakgename
+yum install -y packagename
+yum remove packagename
+yum install kernel
+yum update kernel
+yum remvoe kenrel
+yum info PkgName
+yum search packagename
+yum history
+yum history undo ID
+yum history redo ID
+yum update (updates all the packages available in the repo)
+yum update packagename (updates only the given package)
+yum reinstall packagename -y 
+
+
+
+
